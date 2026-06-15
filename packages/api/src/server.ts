@@ -286,12 +286,21 @@ app.post("/v1/generate", async (c) => {
   const b = await c.req.json().catch(() => ({}));
   const type = b.type === "auto" ? "auto" : b.type === "longform" ? "longform" : "new";
   if ((type === "new" || type === "longform") && !b.seed) return c.json({ error: `seed required for a '${type}' build` }, 400);
+  // Output geometry (wire contract): an optional named aspect, or a custom
+  // width+height (both required) that overrides it. Absent → engine default 9:16.
+  const aspect = b.aspect === "9:16" || b.aspect === "1:1" || b.aspect === "16:9" ? b.aspect : undefined;
+  const width = Number.isFinite(b.width) && b.width > 0 ? Math.round(b.width) : undefined;
+  const height = Number.isFinite(b.height) && b.height > 0 ? Math.round(b.height) : undefined;
+  if ((width && !height) || (!width && height)) return c.json({ error: "custom canvas needs both width and height" }, 400);
   const job = {
     id: `job_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
     type,
     channel: String(b.channel ?? "labrinox"),
     seed: b.seed ? String(b.seed) : undefined,
     mood: b.mood ? String(b.mood) : undefined,
+    aspect,
+    width,
+    height,
     voice: b.voice === true,
     createdAt: new Date().toISOString(),
     by: "api",

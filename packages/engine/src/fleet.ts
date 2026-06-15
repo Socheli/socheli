@@ -60,6 +60,11 @@ export type Job = {
   seed?: string;
   mood?: string;
   voice?: boolean;
+  // Output geometry (type "new"): a named preset, or a custom width+height that
+  // overrides it. Absent → the engine's 9:16 / 1080×1920 default.
+  aspect?: "9:16" | "1:1" | "16:9";
+  width?: number;
+  height?: number;
   research?: "quick" | "standard" | "deep"; // run verified research on the seed before generating (type "new")
   public?: boolean; // publish publicly after render (auto)
   // For type "render" (finalize a draft built on the control plane): the existing
@@ -78,6 +83,7 @@ export type DeviceStatus = "online" | "idle" | "busy" | "offline";
 export type Presence = {
   device: string;
   status: DeviceStatus;
+  host?: string;
   caps?: string[]; // capability vocabulary above
   profile?: DeviceProfile; // hardware/software profile
   currentJob?: string | null;

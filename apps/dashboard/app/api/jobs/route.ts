@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.SOCHELI_API_KEY ?? ""}` },
       // pass tenancy through so the API/engine stamps the job + item to this workspace.
-      body: JSON.stringify({ seed: seed || undefined, channel, type, mood: body.mood, voice: body.voice, workspaceId: ctx.workspaceId, createdBy: ctx.userId ?? undefined }),
+      body: JSON.stringify({ seed: seed || undefined, channel, type, mood: body.mood, aspect: body.aspect, width: body.width, height: body.height, voice: body.voice, workspaceId: ctx.workspaceId, createdBy: ctx.userId ?? undefined }),
     });
     const data = await r.json().catch(() => ({}));
     if (r.ok) audit(ctx, "queue.dispatch", data?.job?.id ?? data?.id, { type, channel, seed: seed || undefined });

@@ -30,6 +30,17 @@ const LAYOUT_VARIANTS = [
 
 const SLIDE_COUNTS = [3, 5, 6, 8] as const;
 
+/* ─── Aspect presets (canvas shape) ────────────────────────────────────────
+   Mirrors packages/engine/src/format.ts ASPECT_PRESETS — the ONE source of
+   truth for aspect → dimensions. Default Vertical so the 9:16 baseline never
+   regresses. A custom W×H overrides the preset (shared wire contract). */
+type AspectId = "9:16" | "1:1" | "16:9";
+const ASPECTS = [
+  { id: "9:16" as AspectId, label: "Vertical", hint: "9:16 · reels / shorts" },
+  { id: "1:1" as AspectId, label: "Square", hint: "1:1 · feed" },
+  { id: "16:9" as AspectId, label: "Wide", hint: "16:9 · youtube" },
+];
+
 /* ─── Content format icons (custom inline vectors, no dependency) ──────────── */
 const svg = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, width: 22, height: 22 };
 const IconFix = () => (
@@ -83,6 +94,11 @@ export default function NewPost() {
   const [formatKind, setFormatKind] = useState<FormatKind>("short");
   const [layoutVariant, setLayoutVariant] = useState<string>("highlight_bar");
   const [slideCount, setSlideCount] = useState<number>(6);
+  // Canvas shape — default Vertical (keeps the 9:16 baseline). A custom W×H,
+  // when both are set, overrides the preset per the shared wire contract.
+  const [aspect, setAspect] = useState<AspectId>("9:16");
+  const [customW, setCustomW] = useState<string>("");
+  const [customH, setCustomH] = useState<string>("");
 
   const [ideas, setIdeas] = useState<any[]>([]);
   const [idea, setIdea] = useState<any | null>(null);
@@ -129,10 +145,15 @@ export default function NewPost() {
 
   async function commitIdeaAndNext() {
     if (!idea) return;
+    // Canvas shape per the shared wire contract: a valid custom W×H wins,
+    // otherwise carry the named aspect preset.
+    const cw = Number(customW), ch = Number(customH);
+    const custom = cw > 0 && ch > 0;
     await run("setidea", async () => {
       const r = await callTool("draft_set_idea", {
         id: draftId ?? undefined, channel, seed, mood, idea,
         kind: formatKind,
+        ...(custom ? { width: cw, height: ch } : { aspect }),
         ...(formatKind === "static_image" ? { layoutVariant } : {}),
         ...(formatKind === "carousel" ? { slideCount } : {}),
       });
@@ -232,6 +253,30 @@ export default function NewPost() {
                 <span className="np-flabel">Carousel</span>
                 <span className="np-fhint">multi-slide</span>
               </button>
+            </div>
+
+            {/* Aspect (canvas shape) — presets first, optional custom W×H */}
+            <div>
+              <div className="bw-label" style={{ marginBottom: 8 }}>Aspect</div>
+              <div className="np-chip-row">
+                {ASPECTS.map(({ id, label, hint }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className={`np-chip${!(Number(customW) > 0 && Number(customH) > 0) && aspect === id ? " on" : ""}`}
+                    onClick={() => { setAspect(id); setCustomW(""); setCustomH(""); }}
+                    title={hint}
+                  >
+                    {label} <span className="bw-hint">{id}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="bw-label" style={{ margin: "10px 0 8px" }}>Custom size <span className="bw-hint">optional — both W and H override the preset</span></div>
+              <div className="np-chip-row">
+                <input className="bw-input" style={{ maxWidth: 110 }} type="number" inputMode="numeric" min={2} value={customW} onChange={(e) => setCustomW(e.target.value)} placeholder="width" />
+                <span style={{ alignSelf: "center", opacity: 0.5 }}>×</span>
+                <input className="bw-input" style={{ maxWidth: 110 }} type="number" inputMode="numeric" min={2} value={customH} onChange={(e) => setCustomH(e.target.value)} placeholder="height" />
+              </div>
             </div>
 
             {/* Static: layout variant picker */}
@@ -404,6 +449,7 @@ export default function NewPost() {
             </div>
             <div className="np-summary">
               <Row k="format" v={formatKind === "short" ? "Reel" : formatKind === "static_image" ? `Static Post — ${LAYOUT_VARIANTS.find((l) => l.id === layoutVariant)?.label ?? layoutVariant}` : `Carousel — ${slideCount} slides`} />
+              <Row k="aspect" v={Number(customW) > 0 && Number(customH) > 0 ? `${Number(customW)}×${Number(customH)}` : (ASPECTS.find((a) => a.id === aspect)?.label ?? aspect) + ` (${aspect})`} />
               <Row k="brand" v={brandTabs.find((b) => b.id === channel)?.name ?? channel} />
               <Row k="mood" v={mood} />
               <Row k="idea" v={idea?.topic ?? "—"} />

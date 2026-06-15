@@ -83,6 +83,12 @@ export interface GenerateInput {
   channel?: string;
   mood?: string;
   voice?: boolean;
+  /** Output shape — a named preset. Default 9:16 (vertical). A custom width+height overrides this. */
+  aspect?: "9:16" | "1:1" | "16:9";
+  /** Custom canvas width in px (requires height; overrides aspect). */
+  width?: number;
+  /** Custom canvas height in px (requires width; overrides aspect). */
+  height?: number;
   /** "auto" also publishes after render; "new" builds only. Default "new". */
   type?: "auto" | "new";
 }

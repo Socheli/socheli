@@ -15,6 +15,13 @@ const USAGE_FILE = join(DATA, "broll-usage.json");
 
 export type BrollAsset = { src: string; type: "video" | "image" }; // src relative to public/
 
+/* Stock-search orientation, derived from the resolved output shape (see run.ts).
+   `vertical` (the threaded boolean) maps to Pexels/Pixabay orientation values;
+   a square canvas (vertical=false but width===height) is handled at the call
+   site by passing "square". Default everywhere is portrait so the 9:16 default
+   stays byte-for-byte unchanged. */
+export type StockOrientation = "portrait" | "landscape" | "square";
+
 const hash = (s: string) => createHash("sha1").update(s).digest("hex").slice(0, 16);
 
 /* Cross-video de-dup ledger: remember which stock clips we've already used so
@@ -45,13 +52,32 @@ function flushUsed(keys: string[]): void {
 /* Resolution band score: best near 1080-1920 tall, gently penalise tiny or huge. */
 const bandScore = (h: number): number => (h >= 1080 && h <= 1920 ? 1 : h < 1080 ? h / 1080 : Math.max(0, 1 - (h - 1920) / 2400));
 
-/* 9:16 fill score: a portrait clip reads best when it's close to the 1.78 tall
-   ratio of the frame — a near-square portrait has to be cropped hard and loses
-   its composition. Peaks at 1.6–1.95, falls off outside. */
-const aspectScore = (w: number, h: number): number => {
+/* Aspect-fill score: how cleanly a clip fills the target frame without a hard
+   crop. The ideal ratio depends on the output orientation — a tall 1.78 clip for
+   portrait, a wide 1.78 clip for landscape, ~1.0 for square. Peaks at the ideal
+   band and falls off outside. Defaults to portrait so the 9:16 default is
+   unchanged. */
+const aspectScore = (w: number, h: number, orientation: StockOrientation = "portrait"): number => {
+  if (orientation === "landscape") {
+    const r = w / Math.max(1, h);
+    if (r >= 1.6 && r <= 1.95) return 1;
+    return Math.max(0, 1 - Math.abs(r - 1.777) / 0.9);
+  }
+  if (orientation === "square") {
+    const r = w / Math.max(1, h);
+    return Math.max(0, 1 - Math.abs(r - 1) / 0.5);
+  }
   const r = h / Math.max(1, w);
   if (r >= 1.6 && r <= 1.95) return 1;
   return Math.max(0, 1 - Math.abs(r - 1.777) / 0.9);
+};
+
+/* True when a clip's dimensions match the requested output orientation. Used to
+   keep only on-orientation candidates (portrait clips for 9:16, etc.). */
+const fitsOrientation = (w: number, h: number, orientation: StockOrientation): boolean => {
+  if (orientation === "landscape") return w >= h;
+  if (orientation === "square") return Math.abs(w - h) / Math.max(1, Math.max(w, h)) <= 0.1;
+  return h >= w;
 };
 
 /* Duration fit score: prefer clips in the typical scene range (3–12 s), penalise
@@ -114,13 +140,13 @@ export function enrichBrollQuery(query: string, sceneType?: string): string {
    relevance is still scored on the ORIGINAL query tokens so the hint never crowds
    out on-topic matches, and the cache key upstream is unchanged so re-renders stay
    instant. */
-async function pexelsVideoUrl(query: string, used: Set<string>, styleHint?: string): Promise<string | null> {
+async function pexelsVideoUrl(query: string, used: Set<string>, styleHint?: string, orientation: StockOrientation = "portrait"): Promise<string | null> {
   const key = process.env.PEXELS_API_KEY;
   if (!key) return null;
   try {
     const searchQuery = styleHint ? `${query} ${styleHint}` : query;
     const res = await fetchWithRetry(
-      `https://api.pexels.com/videos/search?query=${encodeURIComponent(searchQuery)}&per_page=30&orientation=portrait&size=large`,
+      `https://api.pexels.com/videos/search?query=${encodeURIComponent(searchQuery)}&per_page=30&orientation=${orientation}&size=large`,
       { headers: { Authorization: key } },
     );
     if (!res.ok) return null;
@@ -135,25 +161,28 @@ async function pexelsVideoUrl(query: string, used: Set<string>, styleHint?: stri
       }[];
     };
     const qTokens = query.toLowerCase().split(/\W+/).filter((t) => t.length > 2);
+    // Page-slug cue rewarded for matching the requested orientation.
+    const orientCue = orientation === "landscape" ? ["landscape", "horizontal"] : orientation === "square" ? ["square"] : ["portrait", "vertical"];
     type Cand = { id: number; link: string; res: number; rel: number; asp: number; qualityBonus: number; dur: number };
     const cands: Cand[] = [];
-    for (const v of (json.videos ?? []).filter((vv) => vv.height >= vv.width)) {
-      // highest-res portrait file within a sane cap (avoid 4K monsters)
+    for (const v of (json.videos ?? []).filter((vv) => fitsOrientation(vv.width, vv.height, orientation))) {
+      // highest-res on-orientation file within a sane cap (avoid 4K monsters).
+      // Resolution is banded off the SHORT side so landscape clips aren't penalised.
       const f = v.video_files
-        .filter((x) => x.height >= x.width && x.height <= 2160)
-        .sort((a, b) => b.height - a.height)[0];
+        .filter((x) => fitsOrientation(x.width, x.height, orientation) && Math.min(x.width, x.height) <= 2160)
+        .sort((a, b) => Math.min(b.width, b.height) - Math.min(a.width, a.height))[0];
       if (!f) continue;
       // Score relevance against the Pexels page URL slug (semantic title),
       // not the CDN link (which is a numeric vimeo ID with zero token content).
       const pageSlug = (v.url ?? "").toLowerCase();
       const rel = qTokens.length ? qTokens.filter((t) => pageSlug.includes(t)).length / qTokens.length : 0;
-      // quality signal bonuses: reward HD/1080p and portrait-tagged page slugs,
-      // penalise generic filler footage
+      // quality signal bonuses: reward HD/1080p and on-orientation-tagged page
+      // slugs, penalise generic filler footage
       const qualityBonus =
         (pageSlug.includes("hd") || pageSlug.includes("1080") ? 0.08 : 0) +
-        (pageSlug.includes("portrait") || pageSlug.includes("vertical") ? 0.06 : 0) -
+        (orientCue.some((c) => pageSlug.includes(c)) ? 0.06 : 0) -
         (pageSlug.includes("generic") || pageSlug.includes("stock-footage") ? 0.08 : 0);
-      cands.push({ id: v.id, link: f.link, res: f.height, rel, asp: aspectScore(f.width, f.height), qualityBonus, dur: v.duration ?? 6 });
+      cands.push({ id: v.id, link: f.link, res: Math.min(f.width, f.height), rel, asp: aspectScore(f.width, f.height, orientation), qualityBonus, dur: v.duration ?? 6 });
     }
     if (!cands.length) return null;
     // composite quality: relevance, 9:16 fill, resolution, duration fit, quality bonuses
@@ -182,7 +211,7 @@ async function pexelsVideoUrl(query: string, used: Set<string>, styleHint?: stri
    (unlike the Images API); landscape filtering is done client-side. We prefer
    the `large` quality tier (~720p portrait) over `medium` (~360p) for a sharper
    result on a 1080×1920 frame. */
-async function pixabayVideoUrl(query: string, used: Set<string>, styleHint?: string): Promise<string | null> {
+async function pixabayVideoUrl(query: string, used: Set<string>, styleHint?: string, orientation: StockOrientation = "portrait"): Promise<string | null> {
   const key = process.env.PIXABAY_API_KEY;
   if (!key) return null;
   try {
@@ -208,13 +237,13 @@ async function pixabayVideoUrl(query: string, used: Set<string>, styleHint?: str
       // Prefer the large tier (720p portrait) when available; fall back to medium.
       const f = (v.videos.large?.url ? v.videos.large : v.videos.medium) as { url: string; width: number; height: number } | undefined;
       if (!f?.url || !f.width || !f.height) continue;
-      if (f.width > f.height) continue; // skip landscape
+      if (!fitsOrientation(f.width, f.height, orientation)) continue; // off-orientation (Pixabay Videos has no orientation param)
       const tags = v.tags.toLowerCase().split(/,\s*/);
       // tag match is the stronger signal — tags are human-curated semantic labels
       const tagScore = qTokens.length ? qTokens.filter((t) => tags.some((tag) => tag.includes(t))).length / qTokens.length : 0;
       const slugRel = qTokens.filter((t) => f.url.toLowerCase().includes(t)).length / Math.max(1, qTokens.length);
       const rel = tagScore * 0.7 + slugRel * 0.3;
-      cands.push({ id: v.id, link: f.url, res: f.height, rel, asp: aspectScore(f.width, f.height), tagScore });
+      cands.push({ id: v.id, link: f.url, res: Math.min(f.width, f.height), rel, asp: aspectScore(f.width, f.height, orientation), tagScore });
     }
     if (!cands.length) return null;
     const score = (c: Cand) => c.rel * 0.75 + c.tagScore * 0.5 + c.asp * 0.6 + bandScore(c.res) * 0.4;
@@ -235,12 +264,15 @@ async function pixabayVideoUrl(query: string, used: Set<string>, styleHint?: str
    clip from the Pexels /popular endpoint. Requires no extra key (same
    PEXELS_API_KEY). Used when all search-based sources are exhausted and we still
    want a video rather than a static image. */
-async function pexelsPopularFallback(used: Set<string>): Promise<string | null> {
+async function pexelsPopularFallback(used: Set<string>, orientation: StockOrientation = "portrait"): Promise<string | null> {
   const key = process.env.PEXELS_API_KEY;
   if (!key) return null;
   try {
+    // Min-dimension hints favour the requested orientation (the /popular endpoint
+    // has no orientation param, so on-orientation filtering is done client-side).
+    const min = orientation === "landscape" ? "min_width=1280&min_height=720" : orientation === "square" ? "min_width=1080&min_height=1080" : "min_width=720&min_height=1280";
     const res = await fetchWithRetry(
-      "https://api.pexels.com/videos/popular?per_page=15&min_width=720&min_height=1280",
+      `https://api.pexels.com/videos/popular?per_page=15&${min}`,
       { headers: { Authorization: key } },
     );
     if (!res.ok) return null;
@@ -255,12 +287,12 @@ async function pexelsPopularFallback(used: Set<string>): Promise<string | null> 
     };
     type Cand = { id: number; link: string; res: number; asp: number; dur: number };
     const cands: Cand[] = [];
-    for (const v of (json.videos ?? []).filter((vv) => vv.height >= vv.width)) {
+    for (const v of (json.videos ?? []).filter((vv) => fitsOrientation(vv.width, vv.height, orientation))) {
       const f = v.video_files
-        .filter((x) => x.height >= x.width && x.height <= 2160)
-        .sort((a, b) => b.height - a.height)[0];
+        .filter((x) => fitsOrientation(x.width, x.height, orientation) && Math.min(x.width, x.height) <= 2160)
+        .sort((a, b) => Math.min(b.width, b.height) - Math.min(a.width, a.height))[0];
       if (!f) continue;
-      cands.push({ id: v.id, link: f.link, res: f.height, asp: aspectScore(f.width, f.height), dur: v.duration ?? 6 });
+      cands.push({ id: v.id, link: f.link, res: Math.min(f.width, f.height), asp: aspectScore(f.width, f.height, orientation), dur: v.duration ?? 6 });
     }
     if (!cands.length) return null;
     const score = (c: Cand) => c.asp * 0.7 + bandScore(c.res) * 0.5 + durScore(c.dur) * 0.3;
@@ -279,21 +311,24 @@ async function pexelsPopularFallback(used: Set<string>): Promise<string | null> 
    Images API (separate endpoint from Videos) for a portrait still. Uses the
    `largeImageURL` for the highest available resolution (~780px+ portrait).
    Falls back to webformatURL when large is absent. */
-async function pixabayImageUrl(query: string, used: Set<string>): Promise<string | null> {
+async function pixabayImageUrl(query: string, used: Set<string>, orientation: StockOrientation = "portrait"): Promise<string | null> {
   const key = process.env.PIXABAY_API_KEY;
   if (!key) return null;
   try {
+    // Pixabay Images orientation is vertical | horizontal | all — square has no
+    // dedicated value, so we request `all` and filter to ~square client-side.
+    const pixOrient = orientation === "landscape" ? "horizontal" : orientation === "square" ? "all" : "vertical";
     const res = await fetchWithRetry(
-      `https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(query)}&image_type=photo&orientation=vertical&per_page=20&safesearch=true`,
+      `https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(query)}&image_type=photo&orientation=${pixOrient}&per_page=20&safesearch=true`,
     );
     if (!res.ok) return null;
     const json = (await res.json()) as {
       hits?: { id: number; webformatURL: string; imageWidth: number; imageHeight: number; largeImageURL: string }[];
     };
-    const portrait = (json.hits ?? []).filter((v) => v.imageHeight > v.imageWidth);
-    if (!portrait.length) return null;
-    const fresh = portrait.filter((v) => !used.has(`piximg:${v.id}`));
-    const pool = fresh.length ? fresh : portrait;
+    const matches = (json.hits ?? []).filter((v) => fitsOrientation(v.imageWidth, v.imageHeight, orientation));
+    if (!matches.length) return null;
+    const fresh = matches.filter((v) => !used.has(`piximg:${v.id}`));
+    const pool = fresh.length ? fresh : matches;
     const chosen = pool[parseInt(hash(query).slice(0, 8), 16) % pool.length];
     used.add(`piximg:${chosen.id}`);
     return chosen.largeImageURL || chosen.webformatURL;
@@ -351,9 +386,11 @@ function brollRelevant(videoAbs: string, query: string): boolean {
   }
 }
 
-function sdImage(query: string, dest: string): boolean {
+function sdImage(query: string, dest: string, orientation: StockOrientation = "portrait"): boolean {
   if (!existsSync(VENV_PY)) return false;
-  const r = spawnSync(VENV_PY, [join(SCRIPTS, "sdturbo.py"), query, "512", "896", dest], { encoding: "utf8", timeout: 1000 * 60 * 6 });
+  // Generate at the output orientation (SD Turbo is dimension-agnostic).
+  const [w, h] = orientation === "landscape" ? ["896", "512"] : orientation === "square" ? ["768", "768"] : ["512", "896"];
+  const r = spawnSync(VENV_PY, [join(SCRIPTS, "sdturbo.py"), query, w, h, dest], { encoding: "utf8", timeout: 1000 * 60 * 6 });
   return r.status === 0 && existsSync(dest);
 }
 
@@ -656,15 +693,22 @@ function hasAiVideoKey(): boolean {
    The `used` set is mutated in-memory throughout and flushed to disk once per
    successful resolved asset, preventing concurrent batch races from clobbering
    each other's ledger entries. */
-export async function resolveBroll(query: string, kind: "concrete" | "abstract", used?: Set<string>, styleHint?: string): Promise<BrollAsset | null> {
+export async function resolveBroll(
+  query: string,
+  kind: "concrete" | "abstract",
+  used?: Set<string>,
+  styleHint?: string,
+  orientation: StockOrientation = "portrait",
+): Promise<BrollAsset | null> {
   mkdirSync(BROLL_DIR, { recursive: true });
   const h = hash(`${kind}:${query}`);
   const seen = used ?? loadUsed();
 
   // LEXDRIVE FIRST: the user's own footage trumps any stock source — it's owned,
   // on-brand, zero-cost, and never download-flaky. Falls through to stock when
-  // nothing in the local inventory clears the relevance bar.
-  const owned = resolveInventoryBroll(query, seen);
+  // nothing in the local inventory clears the relevance bar. `vertical` biases
+  // the picker toward portrait clips for 9:16, landscape/square otherwise.
+  const owned = resolveInventoryBroll(query, seen, { vertical: orientation === "portrait" });
   if (owned) return owned;
 
   if (kind === "concrete") {
@@ -674,9 +718,9 @@ export async function resolveBroll(query: string, kind: "concrete" | "abstract",
 
     // Source cascade: Pexels search → Pixabay search → Pexels popular
     const sources: Array<() => Promise<string | null>> = [
-      () => pexelsVideoUrl(query, seen, styleHint),
-      () => pixabayVideoUrl(query, seen, styleHint),
-      () => pexelsPopularFallback(seen),
+      () => pexelsVideoUrl(query, seen, styleHint, orientation),
+      () => pixabayVideoUrl(query, seen, styleHint, orientation),
+      () => pexelsPopularFallback(seen, orientation),
     ];
     for (const trySource of sources) {
       const url = await trySource();
@@ -718,7 +762,7 @@ export async function resolveBroll(query: string, kind: "concrete" | "abstract",
 
   // Pixabay Images fallback (fast, no GPU required, works for both abstract and
   // concrete queries when stock video is unavailable or CLIP-rejected).
-  const pixImgUrl = await pixabayImageUrl(query, seen);
+  const pixImgUrl = await pixabayImageUrl(query, seen, orientation);
   if (pixImgUrl && (await download(pixImgUrl, absImg))) {
     flushUsed([...seen]);
     return { src: relImg, type: "image" };
@@ -726,7 +770,7 @@ export async function resolveBroll(query: string, kind: "concrete" | "abstract",
   if (existsSync(absImg)) try { unlinkSync(absImg); } catch { /* non-fatal */ }
 
   // SD Turbo last resort (GPU-heavy, 6-minute timeout, may be unavailable)
-  if (sdImage(query, absImg)) return { src: relImg, type: "image" };
+  if (sdImage(query, absImg, orientation)) return { src: relImg, type: "image" };
   return null;
 }
 
@@ -742,6 +786,7 @@ export async function resolveScenesBroll(
   scenes: { type?: string; broll?: { query: string; kind: "concrete" | "abstract" } }[],
   used: Set<string> = loadUsed(),
   styleHint?: string,
+  orientation: StockOrientation = "portrait",
 ): Promise<(BrollAsset | null)[]> {
   const BATCH = 4;
   const out: (BrollAsset | null)[] = new Array(scenes.length).fill(null);
@@ -749,7 +794,7 @@ export async function resolveScenesBroll(
     const batchResults = await Promise.all(
       scenes.slice(i, i + BATCH).map((s) =>
         s.broll
-          ? resolveBroll(enrichBrollQuery(s.broll.query, s.type), s.broll.kind, used, styleHint)
+          ? resolveBroll(enrichBrollQuery(s.broll.query, s.type), s.broll.kind, used, styleHint, orientation)
           : Promise.resolve(null),
       ),
     );
@@ -766,13 +811,14 @@ export async function resolveGridCells(
   scenes: Array<{ type?: string; cells?: Array<{ query?: string; bg?: string; bgType?: string }> }>,
   used: Set<string> = loadUsed(),
   styleHint?: string,
+  orientation: StockOrientation = "portrait",
 ): Promise<number> {
   let n = 0;
   for (const s of scenes) {
     if (s?.type !== "grid" || !Array.isArray(s.cells)) continue;
     for (const cell of s.cells) {
       if (!cell?.query) continue;
-      const a = await resolveBroll(cell.query, "concrete", used, styleHint);
+      const a = await resolveBroll(cell.query, "concrete", used, styleHint, orientation);
       if (a) {
         cell.bg = a.src;
         cell.bgType = a.type;

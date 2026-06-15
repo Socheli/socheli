@@ -1862,6 +1862,13 @@ export const ContentItem = z.object({
   // carousel generation) honour the chosen layout + slide count.
   layoutVariant: z.string().optional(),
   slideCount: z.number().int().optional(),
+  // Output canvas chosen in the format builder, carried across the stateless
+  // draft steps so draftStoryboard can stamp it onto the storyboard (the same
+  // shape generate() resolves). A custom width+height overrides `aspect`; all
+  // omitted = the 9:16 / 1080×1920 default. width/height stay source of truth.
+  aspect: z.enum(["9:16", "1:1", "16:9"]).optional(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
   seedIdea: z.string(),
   idea: Idea.optional(),
   script: Script.optional(),

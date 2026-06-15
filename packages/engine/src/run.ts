@@ -10,7 +10,7 @@ import { saveItem, loadItem, newId, nowIso, logLine, charge, warn } from "./stor
 import { autoSyncAfterRender } from "./sync.ts";
 import { synthVoiceSceneSynced, ensureMusic, evenSubtitles, musicBeatFrames, synthSfx, buildSfxCues, duckMusic, polishVoice } from "./media.ts";
 import { resolveScenesBroll, resolveGridCells, loadUsed } from "./broll.ts";
-import { resolveFormat, type AspectId } from "./format.ts";
+import { resolveFormat, isPortrait, type AspectId } from "./format.ts";
 import { makeThumbnail } from "./derivatives.ts";
 import { musicPrompt } from "./music-prompt.ts";
 import { cleanIdea, cleanScript, cleanStoryboard, cleanPackage } from "./sanitize.ts";
@@ -283,8 +283,12 @@ export async function generate(seed: string, channelId: string, opts: Opts = {})
     step("b-roll: skipped (pure motion graphics)");
   } else if (opts.broll !== false) {
     const usedBroll = loadUsed();
-    brolls = await resolveScenesBroll(board.scenes, usedBroll, mood.footageSearch);
-    const cells = await resolveGridCells(board.scenes, usedBroll, mood.footageSearch); // full-bleed bg per grid panel
+    // Stock footage orientation follows the resolved output shape: portrait for
+    // 9:16 (the default), landscape for 16:9, square for 1:1. Threaded down so the
+    // Pexels search + inventory picker request the matching orientation.
+    const orientation = isPortrait(fmt) ? "portrait" : fmt.width === fmt.height ? "square" : "landscape";
+    brolls = await resolveScenesBroll(board.scenes, usedBroll, mood.footageSearch, orientation);
+    const cells = await resolveGridCells(board.scenes, usedBroll, mood.footageSearch, orientation); // full-bleed bg per grid panel
     const got = brolls.filter(Boolean).length;
     step(got ? `b-roll: ${got}/${board.scenes.length} scenes${cells ? ` + ${cells} grid panels` : ""}` : "b-roll: none (geometric background)");
   }

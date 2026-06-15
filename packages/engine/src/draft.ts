@@ -12,6 +12,7 @@ import { resolveChannel, channelForMood, defaultMoodFor } from "./channels.ts";
 import { pickHook, writeScript, buildStoryboard } from "./stages.ts";
 import { saveItem, loadItem, newId, nowIso, charge } from "./store.ts";
 import { cleanIdea, cleanScript, cleanStoryboard } from "./sanitize.ts";
+import { resolveFormat } from "./format.ts";
 
 type IdeaT = z.infer<typeof Idea>;
 
@@ -57,6 +58,7 @@ Return ONLY JSON: {"ideas":[{"topic","angle","format","rationale","mood"}]}`,
 export function draftSetIdea(input: {
   id?: string; channel?: string; seed?: string; idea: unknown; mood?: string;
   kind?: "short" | "longform" | "static_image" | "carousel"; layoutVariant?: string; slideCount?: number;
+  aspect?: "9:16" | "1:1" | "16:9"; width?: number; height?: number;
 }): ContentItem {
   const idea = cleanIdea(Idea.parse(input.idea));
   const item = input.id ? loadItem(input.id) : newDraft(input.channel ?? "labrinox", input.seed ?? idea.topic);
@@ -66,6 +68,11 @@ export function draftSetIdea(input: {
   if (input.kind) item.kind = input.kind;
   if (input.layoutVariant) item.layoutVariant = input.layoutVariant;
   if (input.slideCount) item.slideCount = input.slideCount;
+  // Carry the chosen output canvas (custom width+height overrides aspect); all
+  // omitted = the 9:16 default. draftStoryboard stamps it onto the storyboard.
+  if (input.aspect) item.aspect = input.aspect;
+  if (input.width) item.width = input.width;
+  if (input.height) item.height = input.height;
   item.status = "idea_proposed";
   item.updatedAt = nowIso();
   saveItem(item);
@@ -105,6 +112,13 @@ export async function draftStoryboard(id: string, guidance = ""): Promise<Conten
   const sb = await buildStoryboard(ec, item.idea, item.script, item.mood, guidance);
   let board = cleanStoryboard(sb.data);
   board = { ...board, scenes: board.scenes.map((s) => (s.type === "cta" ? { ...s, handle: c.handle ?? (s as { handle?: string }).handle } : s)) };
+  // Stamp the chosen output geometry onto the storyboard (same resolution the
+  // whole-pipeline generate() applies). Custom width+height overrides aspect;
+  // all omitted resolves to the 9:16 / 1080×1920 default — no regression.
+  const fmt = resolveFormat({ aspect: item.aspect, width: item.width, height: item.height });
+  board.width = fmt.width;
+  board.height = fmt.height;
+  board.aspect = fmt.aspect;
   item.storyboard = board;
   item.status = "storyboard_ready";
   charge(item.ledger, "draft-storyboard", sb.usd);

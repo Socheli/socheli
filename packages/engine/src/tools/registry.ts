@@ -142,6 +142,9 @@ import { timelineEditTools } from "./timeline-edit-tools.ts";
 import { ingestSeedTools } from "./ingest-seed-tools.ts";
 import { understandingTools } from "./understanding-tools.ts";
 import { ingestTools } from "./ingest-tools.ts";
+import { demoTools } from "./demo-tools.ts";
+import { scenarioTools } from "./scenario-tools.ts";
+import { deviceTools } from "./device-tools.ts";
 
 // Shared helpers live in the leaf ./helpers.ts (see the re-export block below for
 // why). Imported here for registry.ts's OWN tool definitions; the re-export keeps
@@ -195,6 +198,9 @@ const generationTools: PipelineTool[] = [
         seed: z.string().min(1).describe("the one-line idea/topic to build from"),
         channel: z.string().default("labrinox"),
         mood: z.string().optional(),
+        aspect: z.enum(["9:16", "1:1", "16:9"]).optional().describe("output shape (default 9:16 vertical); a custom width+height overrides this"),
+        width: z.number().int().positive().optional().describe("custom canvas width in px (requires height; overrides aspect)"),
+        height: z.number().int().positive().optional().describe("custom canvas height in px (requires width; overrides aspect)"),
         voice: z.boolean().default(false),
         music: z.boolean().default(true),
         broll: z.boolean().default(true),
@@ -203,9 +209,11 @@ const generationTools: PipelineTool[] = [
         maxQaPasses: z.number().int().min(1).max(5).default(3).describe("max iterative QA+revision passes before render (stops early when score ≥ 8)"),
       })
       .strict(),
-    run: ({ seed, channel, mood, voice, music, broll, preview, abStoryboard, maxQaPasses }) => {
+    run: ({ seed, channel, mood, aspect, width, height, voice, music, broll, preview, abStoryboard, maxQaPasses }) => {
       const args = ["new", seed, "--channel", channel];
       if (mood) args.push("--mood", mood);
+      if (width && height) args.push("--size", `${width}x${height}`);
+      else if (aspect) args.push("--aspect", aspect);
       if (voice) args.push("--voice");
       if (!music) args.push("--no-music");
       if (!broll) args.push("--no-broll");
@@ -1420,9 +1428,12 @@ const draftTools: PipelineTool[] = [
       kind: z.enum(["short", "longform", "static_image", "carousel"]).optional(),
       layoutVariant: z.string().optional(),
       slideCount: z.number().int().optional(),
+      aspect: z.enum(["9:16", "1:1", "16:9"]).optional().describe("output shape (default 9:16 vertical); a custom width+height overrides this"),
+      width: z.number().int().positive().optional().describe("custom canvas width in px (requires height; overrides aspect)"),
+      height: z.number().int().positive().optional().describe("custom canvas height in px (requires width; overrides aspect)"),
     }).strict(),
-    run: ({ id, channel, seed, mood, idea, kind, layoutVariant, slideCount }) =>
-      ok(draftSetIdea({ id, channel, seed, mood, idea, kind, layoutVariant, slideCount }), "idea set"),
+    run: ({ id, channel, seed, mood, idea, kind, layoutVariant, slideCount, aspect, width, height }) =>
+      ok(draftSetIdea({ id, channel, seed, mood, idea, kind, layoutVariant, slideCount, aspect, width, height }), "idea set"),
   }),
   tool({
     name: "draft_script",
@@ -1756,6 +1767,9 @@ export const pipelineTools: PipelineTool[] = [
   ...ingestSeedTools,
   ...understandingTools,
   ...ingestTools,
+  ...demoTools,
+  ...scenarioTools,
+  ...deviceTools,
 ];
 
 /** Every capability in one list: editor tools + pipeline tools. */

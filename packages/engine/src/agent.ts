@@ -173,7 +173,7 @@ export function startAgent(deviceId: string): void {
       const item = await generateLongform(job.seed ?? "", channel, { mood: job.mood, onLog });
       itemId = item.id;
     } else {
-      const item = await generate(job.seed ?? "", channel, { voice: job.voice, mood: job.mood, research: job.research, onLog });
+      const item = await generate(job.seed ?? "", channel, { voice: job.voice, mood: job.mood, aspect: job.aspect, width: job.width, height: job.height, research: job.research, onLog });
       itemId = item.id;
     }
     // push the freshly-rendered data/ up to the server (control done, data follows)
