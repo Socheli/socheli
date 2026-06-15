@@ -1,0 +1,37 @@
+{
+  "name": "@socheli/cli",
+  "version": "0.1.2",
+  "description": "Socheli command-line interface — drive your content engine from anywhere.",
+  "author": "Socheli <contact@socheli.com> (https://socheli.com)",
+  "license": "MIT",
+  "homepage": "https://github.com/Socheli/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Socheli/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Socheli/cli/issues"
+  },
+  "keywords": [
+    "socheli",
+    "cli",
+    "content",
+    "video",
+    "ai",
+    "faceless",
+    "automation"
+  ],
+  "type": "module",
+  "bin": {
+    "socheli": "src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@socheli/sdk": "workspace:*"
+  }
+}

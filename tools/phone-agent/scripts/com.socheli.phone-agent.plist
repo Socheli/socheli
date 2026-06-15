@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Scheduled posting. Installed to ~/Library/LaunchAgents/.
+  Runs scheduled-post.sh at 12:00, 17:00 and 20:00 local (3x/day), each posting
+  up to 3 packaged runs human-paced. Does NOT run at load.
+  Install (substitute the absolute path to your checkout for __AGENT_DIR__ first):
+    sed "s#__AGENT_DIR__#$(cd "$(dirname "$0")/.." && pwd)#g" com.socheli.phone-agent.plist \
+      > ~/Library/LaunchAgents/com.socheli.phone-agent.plist
+    launchctl load -w ~/Library/LaunchAgents/com.socheli.phone-agent.plist
+  Disable:  launchctl unload -w ~/Library/LaunchAgents/com.socheli.phone-agent.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.socheli.phone-agent</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__AGENT_DIR__/scripts/scheduled-post.sh</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>17</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>20</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>__AGENT_DIR__/scheduled.log</string>
+  <key>StandardErrorPath</key>
+  <string>__AGENT_DIR__/scheduled.log</string>
+</dict>
+</plist>

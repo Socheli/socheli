@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://socheli.com/sitemap.xml

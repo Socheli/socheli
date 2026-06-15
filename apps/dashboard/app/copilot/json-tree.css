@@ -1,0 +1,250 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   JsonTree — the rich, collapsible, depth-leveled explorer that replaces every
+   raw pretty-JSON <pre> in the copilot (tool chips, execution timeline, the
+   auto-viz fallback, and the `json_tree` UI block).
+
+   House grammar: bone-on-near-black, one accent, JetBrains Mono throughout
+   (this is structured data, so it reads as code). A faint ink depth-rail per
+   level (gray ramp), a wobble ink chevron that rotates on expand, typed +
+   colored leaves, real links for URLs. Rows cascade in on the shared .blk-in
+   55ms stagger; reduced-motion renders everything static (covered by the
+   global .blk-in reduced-motion rule + the local guard at the bottom).
+
+   All sizes are mono-tight to match cp-tool-pre / the code surface it replaces.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.jt {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-light);
+  background: #0d0d0d;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* header: label · count · actions */
+.jt-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.015);
+}
+.jt-head-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.jt-head-count {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.jt-head-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.jt-act {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: color 120ms, border-color 120ms, background 120ms;
+}
+.jt-act:hover {
+  color: var(--text-primary);
+  border-color: var(--border-interactive);
+  background: var(--accent-surface);
+}
+
+/* body — scroll-capped like cp-tool-pre so a huge payload never blows out the
+   chat column; the +N more expanders keep the DOM small inside that cap */
+.jt-body {
+  padding: 7px 9px 8px;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.jt-node {
+  position: relative;
+}
+
+/* a row: chevron · key · colon · value/count. Branches are clickable. */
+.jt-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 1px 0;
+  border-radius: 4px;
+  min-width: 0;
+}
+.jt-branch {
+  cursor: pointer;
+}
+.jt-branch:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+.jt-branch:focus-visible {
+  outline: 1px solid var(--accent-muted);
+  outline-offset: 1px;
+}
+
+/* chevron */
+.jt-chev-wrap,
+.jt-chev-spacer {
+  flex: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  height: 14px;
+}
+.jt-chev {
+  color: var(--text-muted);
+  transition: transform 150ms cubic-bezier(0.2, 0.7, 0.2, 1), color 120ms;
+  transform: rotate(0deg);
+}
+.jt-chev.open {
+  transform: rotate(90deg);
+}
+.jt-branch:hover .jt-chev {
+  color: var(--text-secondary);
+}
+
+/* key (object) — mono eyebrow tint; index (array) — quiet gutter number */
+.jt-key {
+  color: var(--accent-secondary);
+  white-space: nowrap;
+}
+.jt-idx {
+  color: var(--text-muted);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.jt-colon {
+  color: var(--text-muted);
+  margin-left: -3px;
+}
+
+/* the {n} / [n] child-count badge */
+.jt-count {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+/* ── typed + colored leaves (gray ramp / one accent) ── */
+.jt-v {
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.jt-str {
+  color: var(--text-light); /* bone */
+}
+.jt-quote {
+  color: var(--text-muted);
+}
+.jt-num {
+  color: var(--text-primary); /* slightly brighter mono */
+}
+.jt-bool {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.jt-null {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.jt-ellip {
+  color: var(--text-muted);
+}
+
+/* URLs → real links, in the shared link tint */
+.jt-link {
+  color: var(--info);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(95, 163, 239, 0.35);
+}
+.jt-link:hover {
+  color: var(--accent-hover);
+  border-bottom-color: var(--info);
+}
+
+/* the …more / less and +N more toggles */
+.jt-more {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 0 4px;
+  text-decoration: underline dotted var(--text-muted);
+  text-underline-offset: 2px;
+}
+.jt-more:hover {
+  color: var(--text-primary);
+}
+.jt-more-block {
+  display: inline-block;
+  margin: 2px 0 2px 17px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 5px;
+  padding: 1px 8px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.jt-more-block:hover {
+  border-color: var(--border-interactive);
+  color: var(--text-light);
+}
+
+/* ── depth rail: a faint vertical hairline per nesting level, drawn down the
+   left of each children group on the house gray ramp. The 17px inset aligns
+   the rail under the parent chevron column. ── */
+.jt-children {
+  position: relative;
+  margin-left: 16px;
+  padding-left: 9px;
+  border-left: 1px solid var(--border-subtle);
+}
+.jt-children:hover {
+  border-left-color: var(--border-interactive);
+}
+
+/* the row cascade reuses the shared .blk-in keyframe (opacity + 5px rise on a
+   capped --i*55ms stagger); per-node --i is set inline in JsonTree.tsx. Nodes
+   that are NOT inside a revealed .blk-anim block (e.g. the dev harness, the
+   tool chip) just run the cascade on mount. */
+.jt-node.blk-in {
+  /* inherit the global .blk-in animation; nothing extra needed */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jt-chev {
+    transition: none;
+  }
+  .jt-node.blk-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

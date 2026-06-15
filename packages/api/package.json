@@ -1,0 +1,45 @@
+{
+  "name": "@socheli/api",
+  "version": "0.1.2",
+  "description": "Socheli content engine HTTP API (the control-plane backbone).",
+  "author": "Socheli <contact@socheli.com> (https://socheli.com)",
+  "license": "MIT",
+  "homepage": "https://github.com/Socheli/api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Socheli/api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Socheli/api/issues"
+  },
+  "keywords": [
+    "socheli",
+    "api",
+    "hono",
+    "content",
+    "video",
+    "ai",
+    "control-plane"
+  ],
+  "type": "module",
+  "bin": {
+    "socheli-api": "src/server.ts"
+  },
+  "scripts": {
+    "start": "node --import tsx src/server.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@hono/node-server": "1.13.7",
+    "@os/schemas": "workspace:*",
+    "@os/tokens": "workspace:*",
+    "@socheli/sdk": "workspace:*",
+    "hono": "4.6.14",
+    "mqtt": "^5.15.1"
+  }
+}

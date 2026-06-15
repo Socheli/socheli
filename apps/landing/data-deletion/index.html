@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Deletion — Socheli</title>
+<meta name="description" content="How to delete all Socheli data: numbered steps, the full data inventory (OAuth tokens, media, flat JSON on your devices), deletion timeline, and contact.">
+<link rel="canonical" href="https://socheli.com/data-deletion">
+<meta name="robots" content="max-image-preview:large, max-snippet:-1">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Data Deletion — Socheli">
+<meta property="og:description" content="How to delete all Socheli data: numbered steps, the full data inventory (OAuth tokens, media, flat JSON on your devices), deletion timeline, and contact.">
+<meta property="og:url" content="https://socheli.com/data-deletion">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Socheli">
+<meta property="og:image" content="https://socheli.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Socheli — one idea in, published video out.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+@font-face{font-family:"Inter";src:url(/assets/fonts/inter-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(/assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:optional}
+:root{color-scheme:dark;--bg:#0a0a0a;--surface:#101010;--rule:#1e1e1e;--border:rgba(236,230,216,.07);
+--border-hi:rgba(236,230,216,.15);--ink-1:#ECE6D8;--ink-2:#B8B2A6;--ink-3:#87827A;--ink-4:#5C5851;
+--sans:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink-1);font:400 15px/1.7 var(--sans);letter-spacing:-.011em;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--ink-3)}
+a:hover{text-decoration-color:var(--ink-1)}
+:focus-visible{outline:1px solid var(--ink-1);outline-offset:2px}
+.nav{position:sticky;top:0;height:64px;display:flex;align-items:center;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(236,230,216,.06);z-index:10}
+.nav-in{width:100%;max-width:1344px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:22px;height:20px;color:var(--ink-1)}
+.brand b{font:600 14px/1 var(--sans)}
+.doc-id{font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-4)}
+.nav-links{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.nav-links a{text-decoration:none;color:var(--ink-2)}
+main{max-width:64ch;margin:0 auto;padding:72px 24px 96px}
+h1{font:600 32px/1.15 var(--sans);letter-spacing:-.022em;margin:8px 0 6px}
+h2{font:600 18px/1.4 var(--sans);letter-spacing:-.012em;margin:40px 0 10px}
+p,li{color:var(--ink-2);margin-bottom:12px}
+ul,ol{padding-left:22px;margin-bottom:12px}
+.eyebrow{font:400 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.22em;color:var(--ink-3)}
+.meta{font:400 12px/1.6 var(--mono);color:var(--ink-4);margin-bottom:40px}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px}
+th{font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.16em;color:var(--ink-3);text-align:left;padding:0 12px 10px;border-bottom:1px solid var(--border-hi)}
+td{padding:10px 12px;border-bottom:1px solid var(--rule);font-size:14px;color:var(--ink-2);vertical-align:top}
+code{font:400 13px/1.6 var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px}
+pre{font:400 13px/1.7 var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;overflow-x:auto;margin:12px 0;color:var(--ink-1)}
+.divider{display:flex;align-items:center;gap:14px;margin:48px 0;color:rgba(236,230,216,.32)}
+.divider hr{flex:1;border:0;border-top:1px solid var(--rule)}
+.divider svg{width:14px;height:13px;color:var(--ink-4)}
+footer{border-top:1px solid var(--rule);padding:40px 24px}
+.foot-in{max-width:1344px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 28px;font-size:13px;color:var(--ink-3)}
+.foot-in a{text-decoration:none;color:var(--ink-3)}
+.foot-in a:hover{color:var(--ink-1)}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://socheli.com/data-deletion#page","url":"https://socheli.com/data-deletion","name":"Data Deletion — Socheli","isPartOf":{"@id":"https://socheli.com/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://socheli.com/"},{"@type":"ListItem","position":2,"name":"Data Deletion","item":"https://socheli.com/data-deletion"}]}]}</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="mk-clean" viewBox="0 0 110 100"><path fill="currentColor" d="M50 3 C55 32.5 66 44 86 47 L78.5 50 L86 53 C66 56 55 67.5 50 97 C45 67.5 32.5 55 3 50 C32.5 45 45 32.5 50 3 Z"/><path fill="currentColor" d="M91 50 L99 45.6 L107 50 L99 54.4 Z"/></symbol><symbol id="mk-glyph" viewBox="0 0 100 100"><path fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M50.6 5.2 C54.8 31.7 67.2 44.6 94.8 49.6 C67.6 55.1 55.3 67 50.2 94.6 C45.4 67.4 32.6 55.2 5.6 50.4 C32.9 44.9 45.2 32.2 50.6 5.2 Z"/></symbol></defs></svg>
+<header class="nav"><div class="nav-in">
+  <a class="brand" href="/"><svg aria-hidden="true"><use href="#mk-clean"/></svg><b>SOCHELI</b></a>
+  <span class="doc-id">DOC SOC-004 · DATA DELETION</span>
+  <nav class="nav-links" aria-label="Primary"><a href="/">Manual</a><a href="https://github.com/Socheli">GitHub</a></nav>
+</div></header>
+<main>
+
+<p class="eyebrow">DOC SOC-004 · REV A</p>
+<h1>Data Deletion</h1>
+<p class="meta">Effective 2026-06-11 · how to delete all Socheli data, completely</p>
+
+<h2>1. Data inventory</h2>
+<table>
+<tr><th>Data</th><th>Where it lives</th></tr>
+<tr><td>OAuth tokens (Instagram, YouTube, TikTok)</td><td>flat JSON on your own device (self-host) or in your workspace (hosted)</td></tr>
+<tr><td>Generated media (scripts, storyboards, videos)</td><td>your own disk</td></tr>
+<tr><td>Run, mission, and schedule records</td><td>flat JSON on your own device or in your workspace</td></tr>
+<tr><td>This website</td><td>nothing: no accounts, no analytics, no cookies</td></tr>
+</table>
+
+<h2>2. Deletion steps</h2>
+<ol>
+<li><strong>Revoke the app's platform access.</strong> Instagram: Settings &gt; Security &gt; Apps and websites &gt; remove Socheli. Facebook: Settings &gt; Apps and Websites &gt; remove. Google: <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a> &gt; remove access. This immediately invalidates the stored tokens.</li>
+<li><strong>Delete the local data.</strong> Self-hosted Socheli keeps everything under one folder. Deleting it removes all tokens, runs, schedules, and records:
+<pre>rm -rf &lt;your-socheli-directory&gt;/data</pre>
+Deletion is immediate and entirely under your control. There is no copy elsewhere.</li>
+<li><strong>Hosted workspaces.</strong> If you use a Socheli-hosted workspace, email <a href="mailto:contact@socheli.com">contact@socheli.com</a> from the account's contact address with the subject "Data deletion request". We complete deletion of all workspace data, including connected-account tokens, within 30 days and confirm by reply.</li>
+</ol>
+
+<h2>3. Meta data deletion</h2>
+<p>This page serves as Socheli's data deletion instructions URL for Meta platform integrations. Instagram data accessed by Socheli (account id, username, media metadata, comments, and messages, only for features you enable) is stored as described in section 1 and is removed by the steps above. Revoking the app in your Instagram settings stops all further access immediately.</p>
+
+<h2>4. Data we never hold</h2>
+<p>For self-hosted use there is no Socheli server holding your content: tokens, media, and records exist only on your own devices. Step 2 above is the complete deletion.</p>
+
+<h2>5. Contact</h2>
+<p><a href="mailto:contact@socheli.com">contact@socheli.com</a>. Deletion requests are answered within 30 days.</p>
+
+<div class="divider" aria-hidden="true"><hr><svg><use href="#mk-glyph"/></svg><hr></div>
+<p class="meta">Questions about this document: <a href="mailto:contact@socheli.com">contact@socheli.com</a></p>
+</main>
+<footer><div class="foot-in">
+  <a href="/">Home</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="/data-deletion">Data Deletion</a><a href="https://github.com/Socheli">GitHub</a><span>© Socheli</span>
+</div></footer>
+</body>
+</html>

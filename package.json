@@ -1,0 +1,33 @@
+{
+  "name": "socheli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Socheli — the agentic content engine. One idea in, premium faceless video out, end to end.",
+  "type": "module",
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "content": "tsx packages/engine/src/cli.ts",
+    "socheli": "tsx packages/cli/src/index.ts",
+    "api": "tsx packages/api/src/server.ts",
+    "mcp": "tsx packages/mcp/src/index.ts",
+    "agent": "tsx packages/engine/src/cli.ts agent",
+    "editor": "tsx packages/engine/src/editor-cli.ts",
+    "editor:mcp": "tsx packages/engine/src/editor-mcp.ts",
+    "mcp:socheli": "tsx packages/engine/src/socheli-mcp.ts",
+    "dev": "pnpm --filter dashboard dev",
+    "studio": "pnpm --filter @os/remotion studio",
+    "typecheck": "tsc -p tsconfig.base.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "tsx": "4.19.2",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "kokoro-js": "^1.2.1"
+  },
+  "license": "AGPL-3.0-only"
+}

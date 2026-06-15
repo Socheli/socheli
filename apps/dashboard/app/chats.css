@@ -1,0 +1,242 @@
+/* ── Chat-history manager (ThreadManager) + sidebar inline history ──────────
+   The ONE history manager rendered in two skins:
+     .tm-sidebar  — inline rows in the app sidebar, below the mega-menu triggers
+     .tm-rail     — the /soli chat column's history rail
+   Quiet house ink: bone text on near-black, JetBrains Mono eyebrows, single-
+   stroke ink glyphs that draw themselves in, the brand spark on the active row.
+   Reduced-motion safe at the bottom. */
+
+.tm { display: flex; flex-direction: column; min-height: 0; }
+/* in the /soli rail the manager fills the remaining column height + scrolls */
+.thr-rail .tm-rail { flex: 1; min-height: 0; width: 100%; }
+
+/* search */
+.tm-search {
+  position: relative; display: flex; align-items: center; margin: 0 2px 8px;
+}
+.tm-search-ico {
+  position: absolute; left: 9px; color: var(--text-muted); pointer-events: none;
+}
+.tm-search-input {
+  width: 100%; background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm); padding: 6px 9px 6px 27px;
+  color: var(--text-light); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em;
+  transition: border-color 130ms, background 130ms;
+}
+.tm-search-input::placeholder { color: var(--text-muted); text-transform: lowercase; letter-spacing: 0.06em; }
+.tm-search-input:focus { outline: none; border-color: var(--border-interactive); background: var(--bg-elevated); }
+
+/* actions row */
+.tm-actions { display: flex; gap: 6px; margin: 0 2px 6px; }
+.tm-act {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 5px 6px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
+  background: none; color: var(--text-muted); cursor: pointer;
+  font-size: 10.5px; font-family: var(--font-mono); letter-spacing: 0.03em;
+  transition: color 130ms, background 130ms, border-color 130ms;
+}
+.tm-act:hover { color: var(--text-primary); background: var(--bg-surface); border-color: var(--border-interactive); }
+.tm-act svg { flex-shrink: 0; opacity: 0.8; }
+.tm-add-folder { margin: 0 2px 6px; }
+
+/* the scrolling history body — takes remaining height; thin ink scrollbar */
+.tm-scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 2px; padding: 0 2px 2px; margin: 0 -2px;
+}
+.tm-scroll::-webkit-scrollbar { width: 7px; }
+.tm-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border: 2px solid var(--bg); border-radius: 999px; }
+.tm-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+
+.tm-empty {
+  padding: 10px 9px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+
+/* group (Pinned / Recent / Folder) */
+.tm-group { display: flex; flex-direction: column; }
+.tm-group + .tm-group { margin-top: 6px; }
+.tm-group-head { display: flex; align-items: center; gap: 6px; padding: 4px 6px 3px; }
+.tm-eyebrow {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.tm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.tm-list-indent { padding-left: 12px; }
+
+/* folder header */
+.tm-folder-head { padding: 3px 4px 3px 6px; border-radius: 6px; transition: background 130ms; }
+.tm-folder-head:hover { background: var(--bg-surface); }
+.tm-folder-toggle {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; padding: 2px 2px;
+  background: none; border: 0; cursor: pointer; color: var(--text-secondary); text-align: left;
+  transition: color 130ms;
+}
+.tm-folder-toggle:hover { color: var(--text-primary); }
+.tm-folder-ico { flex-shrink: 0; opacity: 0.7; }
+.tm-folder-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.tm-folder-count { flex-shrink: 0; font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); opacity: 0.7; }
+.tm-chev { flex-shrink: 0; color: var(--text-muted); transition: transform 170ms cubic-bezier(0.22,1,0.36,1); }
+.tm-chev.open { transform: rotate(90deg); }
+.tm-folder-acts { display: none; align-items: center; gap: 2px; flex-shrink: 0; }
+.tm-folder-head:hover .tm-folder-acts, .tm-folder-head:focus-within .tm-folder-acts { display: flex; }
+.tm-mini-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 4px;
+  background: none; border: 0; border-radius: 5px; cursor: pointer; color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase;
+  transition: color 120ms, background 120ms;
+}
+.tm-mini-btn:hover { color: var(--text-primary); background: var(--bg-elevated); }
+.tm-mini-del:hover { color: var(--error); }
+.tm-folder-empty {
+  padding: 4px 9px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted); opacity: 0.6;
+}
+
+/* a thread row */
+.tm-row { position: relative; display: flex; align-items: center; border-radius: var(--radius-sm); }
+.tm-row-main {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px;
+  padding: 6px 8px; background: none; border: 0; border-radius: var(--radius-sm); cursor: pointer;
+  color: var(--text-secondary); font-size: 12.5px; text-align: left;
+  transition: color 130ms, background 130ms;
+}
+.tm-row:hover .tm-row-main { color: var(--text-primary); background: var(--bg-surface); }
+.tm-row.on .tm-row-main { color: var(--text-primary); background: var(--accent-surface); }
+.tm-star { flex-shrink: 0; color: var(--text-light); }
+.tm-star.pinned { color: var(--accent-secondary); opacity: 0.9; }
+.tm-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* the spark moment: the active star stamps in on switch */
+.tm-row.on .tm-star { animation: blk-stamp 260ms cubic-bezier(.2,.9,.3,1.35) both; }
+
+.tm-menu-btn {
+  flex-shrink: 0; display: none; align-items: center; justify-content: center; width: 24px; height: 24px;
+  margin-right: 2px; background: none; border: 0; border-radius: 5px; cursor: pointer; color: var(--text-muted);
+  transition: color 120ms, background 120ms;
+}
+.tm-row:hover .tm-menu-btn, .tm-row:focus-within .tm-menu-btn, .tm-row.menu-open .tm-menu-btn { display: inline-flex; }
+.tm-menu-btn:hover { color: var(--text-primary); background: var(--bg-elevated); }
+
+/* inline rename / new-folder input */
+.tm-rename {
+  flex: 1; min-width: 0; width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-sm); padding: 5px 8px; color: var(--text-primary); font-size: 12.5px;
+  font-family: var(--font-body);
+}
+.tm-rename:focus { outline: none; border-color: var(--accent-muted); }
+
+/* the row's ··· popover menu */
+.tm-menu {
+  position: absolute; top: calc(100% - 2px); right: 4px; z-index: 30; min-width: 168px;
+  display: flex; flex-direction: column; gap: 1px; padding: 5px;
+  background: var(--bg-card); border: 1px solid var(--border-interactive); border-radius: 9px;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.55);
+  animation: tm-pop 140ms cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes tm-pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.tm-menu-item {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 9px;
+  background: none; border: 0; border-radius: 6px; cursor: pointer; color: var(--text-secondary);
+  font-size: 12px; text-align: left; transition: color 120ms, background 120ms;
+}
+.tm-menu-item svg { flex-shrink: 0; opacity: 0.75; }
+.tm-menu-item:hover { color: var(--text-primary); background: var(--bg-surface); }
+.tm-menu-item.on { color: var(--text-primary); }
+.tm-menu-item.on::after { content: ""; }
+.tm-has-sub { justify-content: space-between; }
+.tm-has-sub .tm-chev { margin-left: auto; }
+.tm-menu-del:hover { color: var(--error); background: color-mix(in srgb, var(--error) 12%, transparent); }
+.tm-submenu {
+  display: flex; flex-direction: column; gap: 1px; margin: 1px 0 1px 8px; padding-left: 6px;
+  border-left: 1px solid var(--border-subtle); max-height: 168px; overflow-y: auto;
+}
+
+/* delete-confirm — inline within the menu / under a folder head */
+.tm-confirm {
+  display: flex; align-items: center; gap: 6px; padding: 6px 9px; font-size: 11px; color: var(--text-secondary);
+}
+.tm-confirm-row { padding: 4px 6px; }
+.tm-confirm-yes, .tm-confirm-no {
+  padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border-subtle); background: none; cursor: pointer;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  transition: color 120ms, background 120ms, border-color 120ms;
+}
+.tm-confirm-yes { color: var(--error); }
+.tm-confirm-yes:hover { background: color-mix(in srgb, var(--error) 14%, transparent); border-color: var(--error); }
+.tm-confirm-no { color: var(--text-muted); }
+.tm-confirm-no:hover { color: var(--text-primary); background: var(--bg-surface); }
+
+/* ── Sidebar inline-history section ─────────────────────────────────────────
+   The whole sidebar scrolls: brand header + CTA + Soli/War Room + mega triggers
+   stay; the history section grows to fill remaining height and scrolls; the
+   "All systems go" footer pins at the bottom. */
+.sb-history {
+  flex: 0 0 auto; display: flex; flex-direction: column;
+  padding: 4px 5px 4px; margin: 0 -1px;
+}
+.sb-history .tm { flex: 0 0 auto; }
+/* In the sidebar the thread list does NOT scroll on its own — it grows with
+   its content and the whole .sidebar scrolls. (The /soli .tm-rail keeps its
+   own internal scroll.) */
+.tm-sidebar .tm-scroll { flex: 0 0 auto; overflow: visible; min-height: 0; }
+/* ── Folded rail history (body.nav-collapsed, 72px) ─────────────────────────
+   No room for titles, so each conversation becomes a single hand-drawn topic
+   mark, centred in the rail. The full title surfaces in a fixed-position hover
+   popover (portaled past the rail's overflow-x clip). Newest-first, capped. */
+.tm-collapsed { display: flex; flex-direction: column; align-items: center; }
+.tmc-list {
+  list-style: none; margin: 0; padding: 2px 0; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.tmc-item { position: relative; width: 100%; display: flex; justify-content: center; }
+.tmc-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 34px; padding: 0; border: 0; border-radius: 9px;
+  background: none; color: var(--text-muted); cursor: pointer;
+  transition: color 130ms, background 130ms, transform 130ms;
+}
+.tmc-btn:hover { color: var(--text-primary); background: var(--bg-surface); }
+.tmc-item.on .tmc-btn { color: var(--text-primary); background: var(--accent-surface); }
+.tmc-glyph { opacity: 0.92; }
+.tmc-btn:focus-visible { outline: none; box-shadow: 0 0 0 1.5px var(--accent-muted); }
+/* pinned dot — the brand accent, tucked top-right of the mark */
+.tmc-pin {
+  position: absolute; top: 5px; right: 6px; width: 4px; height: 4px; border-radius: 999px;
+  background: var(--accent-secondary); box-shadow: 0 0 0 2px var(--bg);
+}
+
+/* hover popover — fixed, escapes the sidebar's overflow-x:hidden clip */
+.tmc-pop {
+  z-index: 80; transform: translateY(-50%); pointer-events: none;
+  max-width: 280px; display: flex; align-items: center; gap: 8px;
+  padding: 7px 11px; background: var(--bg-card);
+  border: 1px solid var(--border-interactive); border-radius: 9px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+  animation: tmc-pop-in 120ms cubic-bezier(.2,.7,.2,1) both;
+}
+.tmc-pop-title {
+  color: var(--text-primary); font-size: 12.5px; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.tmc-pop-pin {
+  flex-shrink: 0; font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent-secondary);
+}
+@keyframes tmc-pop-in { from { opacity: 0; transform: translateY(-50%) translateX(-4px); } to { opacity: 1; transform: translateY(-50%) translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .tmc-pop { animation: none; } }
+
+/* the Socheli-style animated divider above the inline history */
+.sb-hist-divider {
+  padding: 12px 9px 8px; color: var(--text-muted); opacity: 0.7;
+}
+/* slow spark drift on the divider's centre star (it sits in InkDivider withStar) */
+.sb-hist-divider .ink-drawable path { animation-duration: 1100ms; }
+.sb-hist-spark { display: inline-flex; }
+
+/* ── reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .tm-menu { animation: none; }
+  .tm-row.on .tm-star { animation: none; }
+  .tm-chev { transition: none; }
+  .sb-hist-divider .ink-drawable path { animation: none; }
+}

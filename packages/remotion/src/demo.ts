@@ -1,0 +1,75 @@
+import type { PostProps } from "./Post.tsx";
+
+export const demoProps: PostProps = {
+  channelLabel: "claude code lab",
+  storyboard: {
+    channel: "claude_code_lab",
+    theme: "lab",
+    topic: "Claude Code task boundaries",
+    format: "mistake_fix",
+    hook: "Claude Code is not failing.",
+    fps: 30,
+    width: 1080,
+    height: 1920,
+    cta: "Follow for practical Claude Code workflows.",
+    scenes: [
+      {
+        id: "s1",
+        type: "hook_text",
+        durationSec: 4,
+        emphasis: false,
+        text: "Claude Code is not failing.",
+        motion: "slam_in",
+      },
+      {
+        id: "s2",
+        type: "terminal",
+        durationSec: 7,
+        emphasis: false,
+        path: "~/work/backend",
+        status: "error",
+        lines: [
+          { kind: "user", text: 'claude "refactor my entire backend"' },
+          { kind: "blank", text: "" },
+          { kind: "assistant", text: "touching 84 files across 12 modules..." },
+          { kind: "error", text: "context overflow — changes unreviewable" },
+        ],
+      },
+      {
+        id: "s3",
+        type: "before_after",
+        durationSec: 8,
+        emphasis: false,
+        caption: "Scope the task, not the repo.",
+        left: { title: "too wide", text: "refactor everything", bad: true },
+        right: {
+          title: "scoped",
+          text: "inspect src/auth, propose a minimal patch, wait for approval",
+          bad: false,
+        },
+      },
+      {
+        id: "s4",
+        type: "kinetic_text",
+        durationSec: 5,
+        emphasis: false,
+        lines: ["Most failures are not", "model problems.", "They are boundary problems."],
+        highlight: ["boundary problems."],
+      },
+      {
+        id: "s5",
+        type: "cta",
+        durationSec: 4,
+        emphasis: false,
+        text: "Give it one job. Review. Repeat.",
+        handle: "@claude_code_lab",
+      },
+    ],
+  },
+  subtitles: [
+    { fromF: 0, toF: 120, lines: ["Most Claude Code failures", "are task boundary problems."] },
+    { fromF: 120, toF: 330, lines: ["Ask it to refactor everything,", "you lose control of context."] },
+    { fromF: 330, toF: 570, lines: ["Scope it down.", "Inspect, patch, approve."] },
+    { fromF: 570, toF: 720, lines: ["Boundaries beat brute force."] },
+  ],
+};

@@ -1,0 +1,29 @@
+{
+  "name": "@os/remotion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./post": "./src/Post.tsx"
+  },
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render"
+  },
+  "dependencies": {
+    "@os/schemas": "workspace:*",
+    "@os/tokens": "workspace:*",
+    "@remotion/bundler": "4.0.461",
+    "@remotion/google-fonts": "4.0.461",
+    "@remotion/renderer": "4.0.461",
+    "@remotion/transitions": "4.0.461",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.461"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.461",
+    "@types/react": "19.2.7"
+  },
+  "license": "AGPL-3.0-only"
+}

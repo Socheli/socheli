@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Socheli Poster</string>
+    <string name="accessibility_description">Drives the social apps\' create flow to post finished Socheli videos. Only acts on apps you choose; no data leaves the device.</string>
+</resources>

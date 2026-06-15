@@ -1,0 +1,13 @@
+src/com/socheli/poster/FleetClient.java
+src/com/socheli/poster/Net.java
+src/com/socheli/poster/ActivePost.java
+src/com/socheli/poster/BootReceiver.java
+src/com/socheli/poster/MainActivity.java
+src/com/socheli/poster/PostJob.java
+src/com/socheli/poster/PostFlows.java
+src/com/socheli/poster/PosterService.java
+src/com/socheli/poster/Prefs.java
+src/com/socheli/poster/Step.java
+src/com/socheli/poster/MqttWs.java
+src/com/socheli/poster/PostAccessibilityService.java
+build/gen/com/socheli/poster/R.java

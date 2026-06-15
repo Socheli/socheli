@@ -1,0 +1,11 @@
+packages:
+  - "packages/*"
+  - "apps/*"
+  - "!apps/mobile" # standalone Expo app — its own npm install (Expo prefers hoisted node_modules)
+allowBuilds:
+  '@clerk/shared': true
+  esbuild: true
+  msgpackr-extract: set this to true or false
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "socheli": {
+      "command": "pnpm",
+      "args": ["mcp:socheli"]
+    },
+    "socheli-editor": {
+      "command": "pnpm",
+      "args": ["editor:mcp"]
+    }
+  }
+}

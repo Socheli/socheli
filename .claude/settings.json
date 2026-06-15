@@ -1,0 +1,22 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm content tools)",
+      "Bash(pnpm content tools:*)",
+      "Bash(pnpm content list)",
+      "Bash(pnpm content show:*)",
+      "Bash(pnpm content channels)",
+      "Bash(pnpm content dna pending:*)",
+      "Bash(pnpm content mission list)",
+      "Bash(pnpm content mission get:*)",
+      "Bash(pnpm content besttimes:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./data/api-keys.json)"
+    ]
+  }
+}

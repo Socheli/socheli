@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Socheli — Open-Source Social Media Manager · Create, Publish, Grow</title>
+<meta name="description" content="Socheli is the open-source social media manager: it creates finished video from one idea, publishes from your own devices and accounts, and grows your channels with research-driven missions.">
+<link rel="canonical" href="https://socheli.com/">
+<meta name="robots" content="max-image-preview:large, max-snippet:-1">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Socheli — the open-source social media manager that publishes itself">
+<meta property="og:description" content="One idea in. Published video out. Create, publish, and grow from your own devices and accounts.">
+<meta property="og:url" content="https://socheli.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Socheli">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://socheli.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bone four-pointed star with a breakaway spark on near-black; Socheli — one idea in, published video out.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="Socheli — one idea in, published video out.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jbmono-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* ───────────────────────── DOC SOC-001 · REV A ───────────────────────── */
+@font-face{font-family:"Inter";src:url(/assets/fonts/inter-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Inter-fb";src:local("Helvetica Neue"),local("Arial");size-adjust:107%;ascent-override:90%;descent-override:22.5%;line-gap-override:0%}
+@font-face{font-family:"JetBrains Mono";src:url(/assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:optional}
+@font-face{font-family:"Caveat";src:url(/assets/fonts/caveat-600.woff2) format("woff2");font-weight:600;font-display:swap}
+:root{
+  color-scheme:dark;
+  --bg:#0a0a0a;--bg-dawn:#121210;--surface:#101010;--surface-2:#111111;
+  --rule:#1e1e1e;--border:rgba(236,230,216,.07);--border-mid:rgba(236,230,216,.10);
+  --border-hi:rgba(236,230,216,.15);--nav-border:rgba(236,230,216,.06);
+  --ink-1:#ECE6D8;--ink-2:#B8B2A6;--ink-3:#87827A;--ink-4:#5C5851;
+  --stroke-1:#ECE6D8;--stroke-2:rgba(236,230,216,.60);--stroke-3:rgba(236,230,216,.32);
+  --sans:"Inter","Inter-fb",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --hand:"Caveat",cursive;
+  --page-max:1344px;--prose-max:680px;--pad:24px;--nav-h:64px;
+  --ease-out:cubic-bezier(.22,1,.36,1);--ease-ink:cubic-bezier(.65,0,.35,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-gutter:stable both-edges;scroll-behavior:smooth;overflow-x:clip}
+body{background:var(--bg);color:var(--ink-1);overflow-x:clip;font:400 15px/1.6 var(--sans);letter-spacing:-.011em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::after{content:"";position:fixed;inset:0;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAAAAADmVT4XAAAACXBIWXMAAAABAAAAAQBPJcTWAAAHyElEQVR4nO3Y+z/TfQPHceObkcPIWTOWUw45bZdDczYLIXfCkDAhS4k5JhS6Y7tYlCWHaOVQyqEcCrcccridT7lncshpIR2uS05JN/c/0f3D5594Pd+PN+x4PWpLSju1hlhCdlTomDb7Z5B3bF0BT/gTliF3/EZXofFfCr4yvezwuBJB68Nyo7d1+9VEr7Q3IOtqvRD0b+mubF/Uc/Y8ziTa2ipIUg1O5A4+XogwrhdL+2oUoYtgECOzAjDy0neEJmrHezN9uG9g3NAv3D01rpbGBwq28yeFQGm89eYG1Nltt1DYioAFPbrjNZMYhfeLe4gMroy+dBnuVNsyFoXuRElUoum0d6t/aGWo+/XS+AZc//EIvbTDTBKc27SAmXZQUev9dHetC0x1B2lz0vXgX26j8HyzFwuk7Yd6LRR1Ud3pMIpQdK99h4hzuSmiVd5a0mNzHfdRvwTKSvuTlu3/6hnvW8fG1RVIzlP3q75AQT3x7oSTcg1ySDrKFE0+utzJeT97CrMbZtWcN6Yaf2ar28v7p825jZPHsCW4ZPjqSBOXxOzqzUEiyatNv+p1J0d4aX7wzXKTpFZCg3gjnNM2YDc0kQ8N++eUX0UnwuIfHrimapb/pS01qBcaXU081THc84O1rkB4MLe9prJqCTeoMICdpAj1jZBxm0aUJ06StJlMu7Zg5BQ6Of/IXz60sBcztFtvQgp8xFF5qH7R7L4HqUpX+QUvUohp8w0/Y8YfpaIqHu9QKYtZlqSARZuD3tnduCsCfGvn48tas96G+OZWBc0we5ibqudalyC88eFbyE+w7mBKsfbFG1t6OxJzUod/bb1N4au7fO2V2LIg0eAogYosG5hTwTaimnMJ0nHdAcOZa8WnjA1PypchdI4hpRdD83s0J8QfTblp7ga91EQH5XeJMi5QErKqyYTPj58mYeXPGFkNF5XXSeLUlLWLn4vXRbw6tK7DR2ZKqUL8408jLEYJd/xyx276maKT8S3Vb/0jInIropdZeMMbVQSGqqLRNZYzF6VXXkPRw/iRwKyDgFDOylIwd0gV5qqz2+d2TsJ5iF71YHqUKAX/KOtrHFCk2260uOEtJtrEP8Hi3FR/JiC0mL0V7qCedxW3zBTuPspweCeLE4ZFejgxoJDAmJN99KbN3sdc6YQx+ulAGc/YbHQkNEfAp5wWTC55sSb70Xpbr0P/DsJCFudlkOC8UNKs8r6cn6nDL7xAurYQmZovlbThgLxZw0Z2FVIxsBPKZK4BqnIyTiNl/em1VWa7SsO8yYVmlj//2XQOlDSVoeM3yldUZWsIGyQK60P3E6cCa8NRiU3cMUy5nh1+Elo1Psa2k0/bG6rt8emunVVqWh12SxfPiXN9HYiNVvPRzLWscLjH1XdJYHvN/R57YY5abxd/7F4UPLVX9FlOJ5GRK/NF0v5OI9913w+Vk9wFjdkS7iTTexrRrTxSTqlhr01YSKsrZxaJmn8ocMLtxaFCVGLzdySWhV3wlGY2l9Fj5O2v+9XsMkbZAwonsIdJ11XMR+rvs91tCwdgYpiO0MXi0loDZW+eBYmDYXOqE3nOsyPhpby+FVF+r6U163/xUKGuc+aOtqYxBW+wsUq8LmKLFn8nHEp60pDhQ75es+g3PuRBEnTctPsV+izI0n7HAGpW9JNLVOopIqx+f4Cle+WSg9VEKAHwGWZba0I21wusbHSv9pA5/+iB1jxWqMhatrvp12avtKbLbQNxKZSyqAilZZvIaEMxUuznzsp3NV7JbpJB3zaXurAQ5J93/tNdmjadrXJ85zKulc6xOX83R4KnqNp256Xcbk+cd0uRTREFeplz2qhphLVdc2pWEIGiDrEzaursv6P/EzE7WDvVoiyqWcrhiE7Givs04ZcVbmg0XPy3B+x0db9Fp9Kvai7Y93OsXddG/k2P0FsHLnC77y62rgRTP1U2ryRLGYa6IKS1lB4aP0C8v+cVxp1VLGz4Si/pImtS13r3wEyaVUI8/GBwHsTcT7HJ5xqiLdmxX5BgVhlUGFs39SE8g4Uf3U/x/TmFOJkxdjiG7fO/FLsoVhFqZU521R0aRrBF0lPZp1Dl7HnluVHrL7F7KT7BHfypEPGuHhP/1UjsHYJhWG5ZivHlnYmdYI9vXtxLcbVbZCTVU6Ot1FSlei/FdJBikGKQYpBikGLI571Bw5iyh+KbjjhJGqvB2z3lT1pc8dlKxpCztsuPmNK+oJysgWW89Him4vbDrefrxS0Rij0qI8sLl6qPOGn+jb1LmUROa2uW8kgVeP6kvVkNly44IrIRa2HBUNBumehisLRKzbQqjysPuAj9S+iD3ZezqJsUuh4iasG0g2ewTucEZFnPUd6f5fGFaY5W2Gl86GlvyHRy+vmTKMOin1s2H3tdJkpk5m+He1Ap1hJ7FlT0G4uatMOm9ma5AHV/ltvsz/Itk+gpq9uSvI5Ebte9WS6u9sPkq9G8ruIUM9IpgLw3y11JteO0TPLeLMd/4/mhZG5fivHZm+UYMMuBBcACYAGwAMxykGKQYpBikOL/gxSDWQ4sABYAC4AFwAJgAbAAWAAsABYAC8BFA1IMUgxSDFL821MMZjmwAFgALAAWAAuABcACYAGwAFgALAAXDUgxSDFIMUjxb08xmOXAAmABsABYACz43Rb8F2EF7Zqf9rW8AAAAAElFTkSuQmCC) repeat;opacity:.04;mix-blend-mode:overlay;pointer-events:none;z-index:2147483647}
+::selection{background:rgba(236,230,216,.18)}
+img,svg,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--ink-3);transition:text-decoration-color .15s}
+a:hover{text-decoration-color:var(--ink-1)}
+:focus-visible{outline:1px solid var(--ink-1);outline-offset:2px}
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--ink-1);color:var(--bg);padding:8px 16px;z-index:100;font-family:var(--mono);font-size:12px}
+.skip-link:focus{left:8px;top:8px}
+.wrap{max-width:var(--page-max);margin:0 auto;padding:0 var(--pad)}
+.prose{max-width:var(--prose-max)}
+/* ── type ─────────────────────────────────────────────────── */
+h1{font:650 clamp(40px,8vw,72px)/1.02 var(--sans);letter-spacing:-.022em}
+h2{font:600 36px/1.1 var(--sans);letter-spacing:-.022em}
+h3{font:600 24px/1.33 var(--sans);letter-spacing:-.012em}
+.eyebrow{font:400 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.22em;color:var(--ink-3);display:flex;gap:10px;align-items:center}
+.eyebrow .eb-star{width:12px;height:12px;flex:none;color:var(--ink-3)}
+.folio,.fig-cap{font:400 11px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-4)}
+.mono{font:400 13px/1.7 var(--mono);letter-spacing:0}
+.sub{font:400 17px/1.6 var(--sans);color:var(--ink-2)}
+.hand{font:600 19px/1.3 var(--hand);color:var(--ink-3)}
+/* ── nav / running head ───────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:50;display:flex;align-items:center;
+  background:rgba(10,10,10,.8);-webkit-backdrop-filter:blur(12px) saturate(1.2);backdrop-filter:blur(12px) saturate(1.2);
+  border-bottom:1px solid transparent;transition:border-color .1s}
+.nav.scrolled{border-bottom-color:var(--nav-border)}
+.nav-in{width:100%;max-width:var(--page-max);margin:0 auto;padding:0 var(--pad);display:flex;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:22px;height:20px;color:var(--ink-1)}
+.brand b{font:600 14px/1 var(--sans);letter-spacing:-.01em}
+.doc-id{font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-4);white-space:nowrap}
+.doc-id .folio-live{display:inline-block;transition:opacity .15s}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:22px;font-size:14px}
+.nav-links a{text-decoration:none;color:var(--ink-2)}
+.nav-links a:hover{color:var(--ink-1)}
+.gh-star{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.gh-star .n{display:inline-block;min-width:4ch}
+.cta-ghost{font:400 13px/1 var(--mono);border:1px solid var(--border-hi);border-radius:999px;padding:12px 18px;text-decoration:none;color:var(--ink-1);transition:background .15s,border-color .15s}
+.cta-ghost:hover{background:rgba(236,230,216,.06);border-color:rgba(236,230,216,.25)}
+.cta-try{font:500 13px/1 var(--mono);border:1px solid var(--ink-1);border-radius:999px;padding:12px 18px;text-decoration:none;color:var(--bg);background:var(--ink-1);transition:opacity .15s}
+.cta-try:hover{opacity:.85}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none;opacity:0;transition:opacity .25s}
+.progress.live{opacity:1}
+.progress .bar{position:absolute;inset:0;background:var(--ink-1);transform-origin:left;transform:scaleX(0)}
+.progress .tip{position:absolute;top:-2px;left:0;width:6px;height:6px;color:var(--ink-1);transform:translateX(-3px)}
+@media(max-width:900px){.doc-id{display:none}.nav-links a.hide-m{display:none}}
+/* ── sections ─────────────────────────────────────────────── */
+section{padding:96px 0}
+@media(max-width:768px){section{padding:64px 0}}
+.divider{display:flex;align-items:center;gap:14px;max-width:var(--page-max);margin:0 auto;padding:0 var(--pad);color:var(--stroke-3)}
+.divider svg.rule{flex:1;height:6px;color:var(--stroke-3)}
+.divider svg.dstar{width:16px;height:15px;flex:none;color:var(--ink-3)}
+/* ── hero ─────────────────────────────────────────────────── */
+.hero{position:relative;padding:calc(var(--nav-h) + 96px) 0 96px;overflow:hidden}
+.hero-mark{position:absolute;top:4vh;right:-120px;width:560px;height:510px;color:var(--ink-1);opacity:.035;pointer-events:none}
+.hero h1{position:relative;display:inline-block}
+.hero h1 span{display:block}
+.h1-u{position:absolute;left:1%;bottom:-12px;width:64%;height:14px;color:var(--stroke-2);pointer-events:none}
+.h1-u path{stroke-dasharray:1;stroke-dashoffset:0}
+.hero .sub{max-width:30rem;margin:24px 0 32px}
+.hero-eyebrow{margin-bottom:24px}
+.cmd{display:inline-flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border-mid);border-radius:6px;padding:13px 16px;font:400 14px/1.5 var(--mono)}
+.cmd .ps{color:var(--ink-3)}
+.cmd button{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--ink-3);font:400 12px/1 var(--mono);cursor:pointer;padding:4px}
+.cmd button:hover{color:var(--ink-1)}
+.cmd button svg{width:11px;height:11px}
+.hero-links{margin-top:20px;font-size:14px;color:var(--ink-2)}
+.margin-note{position:absolute;right:6%;top:38%;width:200px;transform:rotate(-2deg);text-align:center}
+.margin-note svg{width:90px;height:54px;color:var(--stroke-2);margin:0 auto 4px}
+@media(max-width:1023px){.margin-note{display:none}}
+/* ── evidence strip ───────────────────────────────────────── */
+.evidence{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 0}
+.evidence .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;font:400 13px/1.7 var(--mono);color:var(--ink-3)}
+.evidence .sep{width:8px;height:8px;color:var(--ink-4);flex:none}
+/* ── figure plates ────────────────────────────────────────── */
+.plate{position:relative;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:32px}
+.plate .ticks{position:absolute;top:8px;left:8px;width:calc(100% - 16px);height:calc(100% - 16px);pointer-events:none;color:var(--stroke-3)}
+.fig-cap{margin-top:14px}
+.log{font:400 13px/1.8 var(--mono);color:var(--ink-1);white-space:pre;overflow-x:auto}
+.log .dim{color:var(--ink-3)}
+.log .em{color:var(--ink-1)}
+.log .gate{color:var(--ink-1);font-weight:400}
+.log .line{display:block}
+.cursor{display:inline-block;width:7px;height:15px;background:var(--ink-1);vertical-align:-2px}
+.fig1-note{position:absolute;right:7%;top:42%;width:150px;transform:rotate(2.5deg);text-align:center}
+@media(max-width:1023px){.fig1-note{display:none}}
+/* ── pipeline spread ──────────────────────────────────────── */
+.spread{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:start}
+.chapters{display:flex;flex-direction:column}
+.chapter{min-height:62vh;display:flex;flex-direction:column;justify-content:center;padding:48px 0}
+.chapter h3{margin:14px 0 12px;font-size:28px}
+.chapter p:not(.eyebrow){color:var(--ink-2);max-width:44ch}
+.artifact{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:18px 20px;font:400 12.5px/1.7 var(--mono);color:var(--ink-2);overflow-x:auto;white-space:pre}
+.artifact .k{color:var(--ink-3)}
+.artifact .s{color:var(--ink-1)}
+.frames{display:flex;gap:12px;margin-top:24px}
+.frame{border:1px solid var(--border-mid);border-radius:2px;padding:5px;background:var(--surface);flex:1;min-width:0}
+.frame img{width:100%;height:auto;border-radius:1px}
+.frame .fl{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);padding:7px 2px 3px;text-align:center}
+.vid{position:relative;margin-top:24px;max-width:190px;border:1px solid var(--border-mid);border-radius:2px;padding:5px;background:var(--surface);cursor:pointer}
+.vid img,.vid video{width:100%;height:auto;border-radius:1px}
+.vid .play{position:absolute;left:5px;right:5px;bottom:5px;display:flex;align-items:center;justify-content:center;gap:6px;height:32px;font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;color:var(--ink-1);background:rgba(10,10,10,.78)}
+.receipt{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:18px 20px;font:400 13px/1.9 var(--mono);color:var(--ink-2);position:relative;max-width:360px;white-space:pre-line}
+.receipt .ok{color:var(--ink-1)}
+.receipt .gate-circ{position:absolute;left:23px;top:41px;width:58px;height:27px;color:var(--stroke-2);pointer-events:none}
+.sticky-col{position:sticky;top:10vh;height:80vh;display:flex;flex-direction:column}
+.sticky-col .plate{flex:1;display:flex;align-items:center;justify-content:center}
+.sticky-col svg.fig2{width:100%;max-width:430px;height:auto;aspect-ratio:420/560}
+.mini-fig{display:none;margin:0 0 8px;color:var(--stroke-1)}
+.mini-fig svg{width:64px;height:48px}
+@media(max-width:767px){
+  .spread{grid-template-columns:minmax(0,1fr);gap:0}
+  .sticky-col{display:none}
+  .chapter{min-height:0;padding:40px 0}
+  .mini-fig{display:block}
+  .frames{gap:8px}
+}
+/* fig2 progressive draw (transition on base → reverses on scroll-up) */
+.fig2 [data-stage]{transition:opacity .4s}
+.fig2 .draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .6s var(--ease-ink)}
+html.js .fig2 [data-stage] text{opacity:0;transition:opacity .4s .25s}
+html.js .plate-live[data-step="1"] [data-stage="1"] text,
+html.js .plate-live[data-step="2"] [data-stage="1"] text,html.js .plate-live[data-step="2"] [data-stage="2"] text,
+html.js .plate-live[data-step="3"] [data-stage="1"] text,html.js .plate-live[data-step="3"] [data-stage="2"] text,html.js .plate-live[data-step="3"] [data-stage="3"] text,
+html.js .plate-live[data-step="4"] [data-stage="1"] text,html.js .plate-live[data-step="4"] [data-stage="2"] text,html.js .plate-live[data-step="4"] [data-stage="3"] text,html.js .plate-live[data-step="4"] [data-stage="4"] text,
+html.js .plate-live[data-step="5"] [data-stage] text{opacity:1}
+@media (prefers-reduced-motion: reduce){html.js .fig2 [data-stage] text{opacity:1!important}}
+html:not(.js) .fig2 [data-stage] text{opacity:1}
+html.js .plate-live[data-step="1"] [data-stage="1"] .draw,
+html.js .plate-live[data-step="2"] [data-stage="1"] .draw,html.js .plate-live[data-step="2"] [data-stage="2"] .draw,
+html.js .plate-live[data-step="3"] [data-stage="1"] .draw,html.js .plate-live[data-step="3"] [data-stage="2"] .draw,html.js .plate-live[data-step="3"] [data-stage="3"] .draw,
+html.js .plate-live[data-step="4"] [data-stage="1"] .draw,html.js .plate-live[data-step="4"] [data-stage="2"] .draw,html.js .plate-live[data-step="4"] [data-stage="3"] .draw,html.js .plate-live[data-step="4"] [data-stage="4"] .draw,
+html.js .plate-live[data-step="5"] .draw{stroke-dashoffset:0;transition:stroke-dashoffset .6s var(--ease-ink)}
+html.js .plate-live:not([data-step]) .draw{stroke-dashoffset:1}
+html:not(.js) .fig2 .draw{stroke-dashoffset:0}
+.fig2 .spark-traveler{transition:transform .6s var(--ease-out),opacity .3s}
+html.js .plate-live[data-step="5"] .spark-traveler{transform:translate(-209px,443px)}
+/* ── fig3 ─────────────────────────────────────────────────── */
+.fig3-wrap{margin-top:40px}
+svg.fig3{width:100%;height:auto;aspect-ratio:760/360}
+.fig3 .draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .9s var(--ease-ink)}
+html:not(.js) .fig3 .draw,.fig3.in .draw{stroke-dashoffset:0}
+.fig3.in .d1{transition-delay:.0s}.fig3.in .d2{transition-delay:.15s}.fig3.in .d3{transition-delay:.3s}
+.fig3.in .d4{transition-delay:.45s}.fig3.in .d5{transition-delay:.6s}.fig3.in .d6{transition-delay:.75s}
+.fig3.in .strike{transition-delay:1.3s}
+.bullets{list-style:none;margin-top:28px;display:flex;flex-wrap:wrap;gap:10px 28px}
+.bullets li{display:flex;align-items:center;gap:10px;font:400 13px/1.7 var(--mono);color:var(--ink-2)}
+.bullets li svg{width:11px;height:11px;color:var(--ink-3);flex:none}
+/* ── specification: create · publish · grow ──────────────── */
+.slogan{font:600 clamp(28px,4vw,44px)/1.15 var(--sans);letter-spacing:-.022em;margin-top:18px}
+.slogan .w{position:relative;display:inline-block}
+.slogan .w svg{position:absolute;left:-2%;bottom:-10px;width:104%;height:12px;color:var(--stroke-2);pointer-events:none}
+.spec-intro{color:var(--ink-2);max-width:52ch;margin-top:18px}
+.triptych{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:56px}
+.trip h3{font:400 13px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-1);margin:18px 0 18px}
+.trip .ticon{width:72px;height:60px;color:var(--stroke-1)}
+.bullets-v{list-style:none;display:flex;flex-direction:column;gap:12px}
+.bullets-v li{display:flex;gap:11px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.bullets-v li svg{width:10px;height:10px;flex:none;margin-top:5px;color:var(--ink-3)}
+sup.fnm{font:400 10px var(--mono);color:var(--ink-3);white-space:nowrap}
+sup.fnm a{text-decoration:none}
+sup.fnm svg{width:8px;height:8px;display:inline-block;vertical-align:0;color:var(--ink-3)}
+.surfaces-line{margin-top:48px;padding-top:24px;border-top:1px solid var(--rule);font:400 13px/1.7 var(--mono);color:var(--ink-3)}
+.refusals{margin-top:56px;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:28px 32px;position:relative}
+.refusals h3{font:400 12px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);margin-bottom:20px}
+.refusals ul{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:14px 32px}
+.refusals li{display:flex;align-items:center;gap:12px;font:400 13px/1.6 var(--mono);color:var(--ink-2)}
+.refusals li svg{width:14px;height:14px;flex:none;color:var(--stroke-2)}
+@media(max-width:900px){.triptych{grid-template-columns:1fr;gap:40px}.refusals ul{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.refusals ul{grid-template-columns:1fr}}
+/* ── FAQ ──────────────────────────────────────────────────── */
+.faq{max-width:64ch}
+.faq h3{font:600 17px/1.6 var(--sans);margin-bottom:8px}
+.faq p{color:var(--ink-2);margin-bottom:0}
+.faq .qa{padding:26px 0}
+.faq .mini-div{display:flex;align-items:center;gap:10px;width:104px;color:var(--stroke-3)}
+.faq .mini-div svg.rule{width:80px;height:5px}
+.faq .mini-div svg.dstar{width:11px;height:11px;color:var(--ink-4)}
+/* ── footnotes + colophon ─────────────────────────────────── */
+.footnotes{padding:48px 0 64px;border-top:1px solid var(--rule)}
+.footnotes ol{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footnotes li{display:flex;gap:10px;font:400 12.5px/1.7 var(--mono);color:var(--ink-3)}
+.footnotes li svg{width:9px;height:9px;flex:none;margin-top:5px;color:var(--ink-4)}
+.colophon{background:var(--bg-dawn);border-top:1px solid rgba(236,230,216,.10);text-align:center;padding:112px 0}
+.colophon .fleuron{width:48px;height:44px;margin:0 auto 28px;color:var(--ink-1)}
+.colophon h2{font-size:28px;letter-spacing:-.022em}
+.cmd-inverse{display:inline-flex;align-items:center;gap:14px;background:var(--ink-1);color:var(--bg);border-radius:6px;padding:14px 18px;font:400 14px/1.5 var(--mono);margin-top:28px;border:0}
+.cmd-inverse .ps{opacity:.55}
+.cmd-inverse button{background:none;border:0;color:inherit;opacity:.6;font:400 12px/1 var(--mono);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cmd-inverse button:hover{opacity:1}
+.cmd-inverse button svg{width:11px;height:11px}
+.colo-meta{margin-top:32px;font:400 12px/1.9 var(--mono);color:var(--ink-4)}
+/* ── footer ───────────────────────────────────────────────── */
+footer{position:relative;border-top:1px solid var(--rule);padding:72px 0 40px;overflow:hidden}
+.foot-mark{position:absolute;bottom:-260px;right:-160px;width:720px;height:660px;color:var(--ink-1);opacity:.03;pointer-events:none}
+.foot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;position:relative}
+.foot-grid h4{font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-4);margin-bottom:16px}
+.foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px}
+.foot-grid a{text-decoration:none;color:var(--ink-2)}
+.foot-grid a:hover{color:var(--ink-1)}
+.foot-bottom{margin-top:56px;font:400 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-4)}
+@media(max-width:768px){.foot-grid{grid-template-columns:repeat(2,1fr)}}
+/* ── reveal choreography (JS + motion-ok only) ────────────── */
+@media (prefers-reduced-motion: no-preference){
+  html.js .rv{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+  html.js .rv.in{opacity:1;transform:none}
+  html.js .rv .draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .9s var(--ease-ink) .25s}
+  html.js .rv.in .draw{stroke-dashoffset:0}
+  html.js .eyebrow.rv .eb-star{opacity:0;transform:rotate(-90deg) scale(.4);transition:opacity .4s var(--ease-out) .1s,transform .4s var(--ease-out) .1s}
+  html.js .eyebrow.rv.in .eb-star{opacity:1;transform:none}
+  html.js .hero h1 span{clip-path:inset(0 0 100% 0);transform:translateY(8px);animation:line-in .7s var(--ease-out) forwards}
+  html.js .hero h1 span:nth-child(2){animation-delay:.12s}
+  @keyframes line-in{to{clip-path:inset(0 0 -8% 0);transform:none}}
+  html.js .hero-eyebrow{opacity:0;animation:fade-in .2s ease .15s forwards}
+  html.js .h1-u path{stroke-dashoffset:1;animation:draw .8s var(--ease-ink) .85s forwards}
+  html.js .h1-u path+path{animation-delay:1.2s}
+  @keyframes fade-in{to{opacity:1}}
+  html.js .log .line{opacity:0;transform:translateY(6px);transition:opacity .45s var(--ease-out),transform .45s var(--ease-out);transition-delay:min(calc(var(--i)*70ms),420ms)}
+  html.js .log.in .line{opacity:1;transform:none}
+  html.js .cursor{opacity:0}
+  html.js .log.in .cursor{opacity:1;animation:blink 1.1s steps(1) infinite 1.4s}
+  @keyframes blink{50%{opacity:0}}
+  html.js .margin-note path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .7s var(--ease-ink) 1.1s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  html.js .margin-note .hand{opacity:0;animation:fade-in .4s ease 1.7s forwards}
+  html.js .receipt .gate-circ path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .8s var(--ease-ink) .3s}
+  html.js .receipt.in .gate-circ path{stroke-dashoffset:0}
+  html.js .bullets li svg{transition:transform .24s var(--ease-out)}
+  html.js .bullets.in li svg{transform:translate(1px,-1px)}
+  @supports (animation-timeline: view()){
+    html.js .fig3 .draw,html.js .receipt .gate-circ path,html.js .trip .ticon .draw,
+    html.js .refusals .draw,html.js .slogan .w path,html.js .divider svg.rule path,
+    html.js .faq .mini-div svg.rule path{
+      transition:none;animation:inkdraw linear both;animation-timeline:view();
+      animation-range:entry 18% cover 42%}
+    html.js .fig3 .d2{animation-range:entry 24% cover 48%}
+    html.js .fig3 .d3{animation-range:entry 30% cover 54%}
+    html.js .fig3 .d4{animation-range:entry 36% cover 60%}
+    html.js .fig3 .d5{animation-range:entry 42% cover 66%}
+    html.js .fig3 .d6{animation-range:entry 48% cover 72%}
+    html.js .fig3 .strike{animation-range:entry 60% cover 86%}
+    html.js .trip .ticon .draw{animation-range:entry 10% entry 90%}
+    html.js .refusals .draw{animation-range:entry 15% entry 75%}
+    @keyframes inkdraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  }
+  @supports (animation-timeline: scroll(root)){
+    html.js .progress .bar{animation:grow linear both;animation-timeline:scroll(root)}
+    html.js .progress .tip{animation:ride linear both;animation-timeline:scroll(root)}
+    @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes ride{from{left:0}to{left:100%}}
+    html.js .hero-mark{animation:drift linear both;animation-timeline:scroll(root)}
+    @keyframes drift{to{transform:translateY(-12%)}}
+  }
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .fig2 .draw,.fig3 .draw,.receipt .gate-circ path{stroke-dashoffset:0!important}
+  html.js .plate-live .spark-traveler{transform:translate(-209px,443px)}
+}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+<script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Organization","@id":"https://socheli.com/#org","name":"Socheli","url":"https://socheli.com/","logo":{"@type":"ImageObject","url":"https://socheli.com/logo-512.png"},"email":"contact@socheli.com","sameAs":["https://github.com/Socheli","https://www.npmjs.com/org/socheli"]},
+ {"@type":"WebSite","@id":"https://socheli.com/#website","name":"Socheli","url":"https://socheli.com/","publisher":{"@id":"https://socheli.com/#org"}},
+ {"@type":"SoftwareApplication","@id":"https://socheli.com/#app","name":"Socheli","description":"Open-source social media manager that creates finished video from one idea, publishes autonomously from the user's own devices and accounts, and grows channels with research-driven missions.","url":"https://socheli.com/","applicationCategory":"MultimediaApplication","operatingSystem":"macOS, Android, Linux","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/license/mit/","downloadUrl":"https://github.com/Socheli","author":{"@id":"https://socheli.com/#org"}},
+ {"@type":"WebPage","@id":"https://socheli.com/#page","url":"https://socheli.com/","isPartOf":{"@id":"https://socheli.com/#website"},"about":{"@id":"https://socheli.com/#app"}},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Does Socheli need my API keys?","acceptedAnswer":{"@type":"Answer","text":"Yes, your own. Model and voice providers are called with keys you supply, stored in a local .env on your machine. There is no Socheli server in the loop."}},
+  {"@type":"Question","name":"Why does Socheli run on my own devices?","acceptedAnswer":{"@type":"Answer","text":"Rendering uses compute you already own, and publishing from your own phone on your own IP means your accounts behave like accounts, not an API farm."}},
+  {"@type":"Question","name":"What does Meta App Review see?","acceptedAnswer":{"@type":"Answer","text":"Socheli requests Instagram permissions through Meta's standard OAuth per workspace. Tokens are stored as flat JSON on the user's own device and are deletable at any time."}},
+  {"@type":"Question","name":"What happens when I stop Socheli?","acceptedAnswer":{"@type":"Answer","text":"The mission loop halts at the next tick. Nothing renders, nothing posts, nothing phones home. Data is flat JSON on your disk — delete the folder and it's gone."}},
+  {"@type":"Question","name":"What is Socheli's license?","acceptedAnswer":{"@type":"Answer","text":"MIT. The CLI, SDK, MCP, and API packages are public on GitHub and npm today; the engine core opens with the public launch."}}
+ ]}
+]}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ── shared marks ─────────────────────────────────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- clean geometric mark: star w/ chevron-cut arm + breakaway spark -->
+    <symbol id="mk-clean" viewBox="0 0 110 100">
+      <path fill="currentColor" d="M50 3 C55 32.5 66 44 86 47 L78.5 50 L86 53 C66 56 55 67.5 50 97 C45 67.5 32.5 55 3 50 C32.5 45 45 32.5 50 3 Z"/>
+      <path fill="currentColor" d="M91 50 L99 45.6 L107 50 L99 54.4 Z"/>
+    </symbol>
+    <!-- spark alone — the footnote glyph -->
+    <symbol id="mk-spark" viewBox="0 0 16 10">
+      <path fill="currentColor" d="M0 5 L8 .6 L16 5 L8 9.4 Z"/>
+    </symbol>
+    <!-- single-pass rough small star (eyebrows, bullets, separators) -->
+    <symbol id="mk-glyph" viewBox="0 0 100 100">
+      <path fill="currentColor" d="M50.6 5.2 C54.8 31.7 67.2 44.6 94.8 49.6 C67.6 55.1 55.3 67 50.2 94.6 C45.4 67.4 32.6 55.2 5.6 50.4 C32.9 44.9 45.2 32.2 50.6 5.2 Z"/>
+    </symbol>
+    <!-- two-pass rough display star + spark (watermarks, fleuron, dividers) -->
+    <symbol id="mk-rough" viewBox="0 0 112 102">
+      <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50.4 4.2 C55 32.1 66.3 44.4 85.7 47.2 L78.9 50.1 L85.9 52.9 C66.1 56.2 55.2 67.4 50.1 95.7 C45.2 67.6 32.5 55.3 4.4 50.2 C32.7 44.8 45.1 32.4 50.4 4.2 Z"/>
+        <path d="M49.7 4.9 C54.6 32.6 65.8 44.9 85.2 47.6 L78.2 50 L85.4 52.4 C65.9 55.7 54.7 67.7 49.9 95.2 C45 67.1 32.8 54.7 4.9 49.8 C32.2 45.3 44.7 32 49.7 4.9 Z" opacity=".55"/>
+        <path d="M91.4 50.2 L99.1 45.7 L106.8 50 L99.3 54.4 Z"/>
+        <path d="M91.8 49.8 L99.3 45.9 L106.4 50.2 L99.1 54 Z" opacity=".5"/>
+      </g>
+    </symbol>
+    <!-- wobbled divider rule -->
+    <symbol id="rule-wob" viewBox="0 0 600 6" preserveAspectRatio="none">
+      <path pathLength="1" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke"
+        d="M2 3.4 C90 2.4 180 3.8 300 3 C410 2.3 520 3.6 598 2.8"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- progress hairline + spark tip -->
+<div class="progress" aria-hidden="true"><div class="bar"></div><svg class="tip"><use href="#mk-spark"/></svg></div>
+
+<!-- ── 3.0 running head ─────────────────────────────────────── -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><svg aria-hidden="true"><use href="#mk-clean"/></svg><b>SOCHELI</b><span style="position:absolute;left:-9999px">Socheli home</span></a>
+    <span class="doc-id">DOC SOC-001 · REV A · <span class="folio-live" id="folio">§ 0 — TITLE</span></span>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#ch-1" class="hide-m">Manual</a>
+      <a href="#spec" class="hide-m">Spec</a>
+      <a href="https://github.com/Socheli" rel="me">GitHub <span class="gh-star" id="gh-star" hidden>★ <span class="n"></span></span></a>
+      <a class="cta-ghost" href="#colophon">$ clone</a>
+      <a class="cta-try" href="https://demo.socheli.com">Try the demo →</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ── 3.1 hero — the title page ─────────────────────────────── -->
+<section class="hero" data-folio="§ 0 — TITLE">
+  <svg class="hero-mark" aria-hidden="true"><use href="#mk-rough"/></svg>
+  <div class="wrap">
+    <p class="eyebrow hero-eyebrow"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>FIELD MANUAL — OWN YOUR FLEET</p>
+    <h1><span>One idea in.</span><span>Published video out.</span><svg class="h1-u" viewBox="0 0 320 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M4 9 C60 5.6 150 8.2 230 6 C265 5.2 295 7.2 316 5.8"/><path pathLength="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".45" d="M10 11.4 C80 8.4 180 10.6 312 8.2"/></svg></h1>
+    <p class="sub">Socheli is the open-source social media manager that creates, publishes, and grows. It scripts, voices, renders, and posts on its own. Your devices do the work. Your disk keeps the data.</p>
+    <div class="cmd"><span><span class="ps">$</span> npx @socheli/cli</span>
+      <button type="button" data-copy="npx @socheli/cli" aria-label="Copy command"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>copy</span></button>
+    </div>
+    <p class="hero-links"><a href="https://github.com/Socheli">Read the architecture →</a></p>
+  </div>
+  <div class="margin-note" aria-hidden="true">
+    <svg viewBox="0 0 90 54" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path class="draw" pathLength="1" d="M84 6 C66 10 38 14 20 36"/>
+      <path class="draw" pathLength="1" d="M28 30 L19 37 L30 40"/>
+    </svg>
+    <span class="hand">runs on what you own</span>
+  </div>
+</section>
+
+<!-- ── 3.2 evidence strip ────────────────────────────────────── -->
+<div class="evidence rv" data-folio="§ 0 — EVIDENCE">
+  <div class="wrap"><p class="row">
+    <span>~130 tools, one registry</span><svg class="sep" aria-hidden="true"><use href="#mk-glyph"/></svg>
+    <span>5 surfaces: CLI / API / MCP / SDK / copilot</span><svg class="sep" aria-hidden="true"><use href="#mk-glyph"/></svg>
+    <span>MIT-licensed packages</span><svg class="sep" aria-hidden="true"><use href="#mk-glyph"/></svg>
+    <span>renders on your device</span><svg class="sep" aria-hidden="true"><use href="#mk-glyph"/></svg>
+    <span>posts from your phone</span><svg class="sep" aria-hidden="true"><use href="#mk-glyph"/></svg>
+    <span>flat JSON, no database</span>
+  </p></div>
+</div>
+
+<!-- ── 3.3 chapter 0 — Fig. 1, the reprinted run ─────────────── -->
+<section data-folio="§ 0 — FIG. 1">
+  <div class="wrap">
+    <p class="eyebrow rv" style="margin-bottom:28px"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>0 — A RUN, REPRINTED</p>
+    <figure style="position:relative;margin:0">
+      <div class="plate">
+        <svg class="ticks" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width=".4">
+          <path d="M0 3 L0 0 L2.2 0 M97.8 0 L100 0 L100 3 M100 97 L100 100 L97.8 100 M2.2 100 L0 100 L0 97" vector-effect="non-scaling-stroke" style="stroke-width:1px"/>
+        </svg>
+        <pre class="log" data-log><span class="line" style="--i:0"><span class="dim">$</span> content new --channel mychannel</span><span class="line" style="--i:1">  trends → idea ...... 46s    <span class="dim">"How Sri Lanka handed China a port for 99 years"</span></span><span class="line" style="--i:2">  hook ............... 18s    <span class="dim">"Colombo took the loan. Beijing took the port."</span></span><span class="line" style="--i:3">  script ............. 51s</span><span class="line" style="--i:4">  storyboard ......... 1m06s  <span class="dim">8 scenes · 28s cut</span></span><span class="line" style="--i:5">  fact-check ......... <span class="em">flagged a misattributed loan figure → revised</span></span><span class="line" style="--i:6">  QA ................. passed 8/10</span><span class="line" style="--i:7">  music · b-roll ..... 2m32s  <span class="dim">119 beats matched · 5 sfx cues</span></span><span class="line" style="--i:8">  render ............. 1m44s  <span class="dim">1080×1920 · Remotion</span></span><span class="line" style="--i:9">  <span class="gate">→ gate: WAITING FOR HUMAN</span></span><span class="line" style="--i:10">  → approve to publish</span><span class="line" style="--i:11"><span class="cursor"></span></span></pre>
+      </div>
+      <figcaption class="fig-cap">Fig. 1 — pipeline run of 2026-06-11, reprinted unedited.<sup class="fnm"><a href="#fn-1" aria-label="footnote 1"><svg aria-hidden="true"><use href="#mk-spark"/></svg>1</a></sup></figcaption>
+      <div class="fig1-note" aria-hidden="true"><span class="hand">run it yourself</span></div>
+    </figure>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg><svg class="rule"><use href="#rule-wob"/></svg></div>
+
+<!-- ── 3.4 chapters 1.0–5.0 — the pipeline spread ────────────── -->
+<section data-folio="§ 1.0 — PIPELINE">
+  <div class="wrap">
+    <div class="spread">
+      <div class="chapters">
+
+        <div class="chapter" id="ch-1" data-step="1" data-folio="§ 1.0 — IDEA">
+          <div class="mini-fig" aria-hidden="true"><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M50 8 C52.6 22 59 28.4 73 31 C59.2 34 52.8 40 50 54 C47.4 40.2 41 33.8 27 31.2 C40.8 28.2 47.2 21.8 50 8 Z"/><path d="M50 58 C50 62 50 64 50 66" stroke-dasharray="1 4"/></svg></div>
+          <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>1.0 — IDEA</p>
+          <h3 class="rv">It starts as one sentence.</h3>
+          <p class="rv">You give Socheli an idea: a topic, a take, a question. That's the whole input. The channel's Brand Genome of learned hooks, topics, and formats shapes everything that follows. Or you give it nothing, and it reads the trend scan instead.</p>
+        </div>
+
+        <div class="chapter" id="ch-2" data-step="2" data-folio="§ 2.0 — SCRIPT">
+          <div class="mini-fig" aria-hidden="true"><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 14 C42 12.8 62 13.6 80 13 M22 28 C46 26.9 60 27.8 78 27.2 M22 42 C38 41 52 41.9 66 41.3 M22 56 C34 55.2 42 55.8 50 55.4"/></svg></div>
+          <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>2.0 — SCRIPT</p>
+          <h3 class="rv">The engine writes like the channel.</h3>
+          <p class="rv">The brain drafts hooks and scenes against the genome, then a fact-check pass challenges every claim. Fig. 1 shows it catching one. Every field is readable, every shape is a zod schema. You can open the file.</p>
+          <div class="artifact rv"><span class="k">// scene s2 — as the engine wrote it</span>
+{
+  <span class="k">"say"</span>: <span class="s">"In 2007, China's Exim Bank lent Sri Lanka about
+         three hundred and seven million dollars…"</span>,
+  <span class="k">"broll"</span>: { <span class="k">"query"</span>: <span class="s">"aerial port construction floodlights night"</span> },
+  <span class="k">"caption"</span>: <span class="s">"2007: China Exim Bank, ~$307M (Phase 1)"</span>,
+  <span class="k">"durationSec"</span>: 4, <span class="k">"emphasis"</span>: false
+}</div>
+        </div>
+
+        <div class="chapter" id="ch-3" data-step="3" data-folio="§ 3.0 — STORYBOARD">
+          <div class="mini-fig" aria-hidden="true"><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 10 L40 9.4 L40.6 56 L14.4 56.6 Z M44 12 L66 11.5 L66.4 53 L44.3 53.6 Z M70 14 L88 13.6 L88.3 50 L70.2 50.5 Z"/></svg></div>
+          <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>3.0 — STORYBOARD</p>
+          <h3 class="rv">Frame-accurate before a single pixel renders.</h3>
+          <p class="rv">Scenes, timings, emphasis, b-roll queries: locked in JSON, validated at the boundary, rendered exactly as written.</p>
+          <div class="frames rv">
+            <div class="frame"><img src="/assets/media/storyboard-1.avif" width="480" height="854" loading="lazy" decoding="async" alt="Storyboard frame: hook title card — One loan. One lost port."><div class="fl">s1 · hook</div></div>
+            <div class="frame"><img src="/assets/media/storyboard-2.avif" width="480" height="854" loading="lazy" decoding="async" alt="Storyboard frame: alert card — Debt service $90M a year."><div class="fl">s4 · turn</div></div>
+            <div class="frame"><img src="/assets/media/storyboard-3.avif" width="480" height="854" loading="lazy" decoding="async" alt="Storyboard frame: shipping-lane map scene."><div class="fl">s7 · close</div></div>
+          </div>
+        </div>
+
+        <div class="chapter" id="ch-4" data-step="4" data-folio="§ 4.0 — RENDER">
+          <div class="mini-fig" aria-hidden="true"><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12 L78 11.4 L78.5 46 L22.4 46.6 Z M40 52 C48 50.9 56 51.6 62 51.2 M34 58 L68 57.4"/></svg></div>
+          <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>4.0 — RENDER, ON YOUR DEVICE</p>
+          <h3 class="rv">Your hardware does the work.</h3>
+          <p class="rv">Remotion compositions render locally. Your GPU, your filesystem, your media. Nothing uploads to a render farm, because there isn't one.<sup class="fnm"><a href="#fn-2" aria-label="footnote 2"><svg aria-hidden="true"><use href="#mk-spark"/></svg>2</a></sup></p>
+          <div class="vid rv" data-video>
+            <img src="/assets/media/run-poster.avif" width="720" height="1280" loading="lazy" decoding="async" alt="Poster frame of the rendered video — One loan. One lost port.">
+            <span class="play">▶ load the real output</span>
+          </div>
+          <p class="fig-cap" style="margin-top:12px">Fig. 2b — actual output, unretouched. render 1m44s · 1080×1920 · Remotion</p>
+        </div>
+
+        <div class="chapter" id="ch-5" data-step="5" data-folio="§ 5.0 — PUBLISH">
+          <div class="mini-fig" aria-hidden="true"><svg viewBox="0 0 100 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M38 8 L62 7.6 L62.6 62 L38.4 62.5 Z M46 56 C50 55.6 52 55.8 54 55.6"/></svg></div>
+          <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>5.0 — PUBLISH, FROM YOUR DEVICES</p>
+          <h3 class="rv">Nothing posts without your gate.</h3>
+          <p class="rv">The mission loop runs until you stop it. Publishing drives your own phone, on your own accounts, over your own IP. The gate is yours.</p>
+          <div class="receipt rv"><svg class="gate-circ" viewBox="0 0 74 30" aria-hidden="true"><path pathLength="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M14 4 C36 1.6 66 3.8 69 13 C71.4 22.6 48 27.8 26 26.4 C10 25.3 3.6 19.8 6 12.4 C8 6.8 16 4.4 30 3.4"/></svg>queued
+→ <span class="ok">gate: APPROVED by you</span>
+→ posted · your account · your IP
+<span class="ok">published <svg style="display:inline-block;width:10px;height:10px;vertical-align:-1px" aria-hidden="true"><use href="#mk-glyph"/></svg></span></div>
+        </div>
+
+      </div>
+
+      <!-- sticky plate — Fig. 2 -->
+      <div class="sticky-col" aria-hidden="true">
+        <figure class="plate plate-live" id="fig2-plate" style="margin:0">
+          <svg class="ticks" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor"><path d="M0 3 L0 0 L2.2 0 M97.8 0 L100 0 L100 3 M100 97 L100 100 L97.8 100 M2.2 100 L0 100 L0 97" vector-effect="non-scaling-stroke" style="stroke-width:1px"/></svg>
+          <svg class="fig2" viewBox="0 0 420 560" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- star + detached spark, top right -->
+            <g stroke="var(--stroke-1)" stroke-width="1.5">
+              <path d="M348.4 24.2 C351 38.1 356.6 44.3 366.3 45.7 L362.9 47.1 L366.4 48.5 C356.5 50.2 351.1 55.8 348.5 69.9 C346 55.9 339.6 49.7 325.6 47.2 C339.7 44.5 345.9 38.3 348.4 24.2 Z"/>
+            </g>
+            <g class="spark-traveler" stroke="var(--stroke-1)" stroke-width="1.5">
+              <path d="M372.4 47.2 L377.3 44.4 L382.2 47.1 L377.4 49.9 Z"/>
+            </g>
+            <!-- construction dotted line, spark path -->
+            <path d="M380 56 C392 140 388 300 364 424" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 5"/>
+
+            <!-- stage 1 — IDEA -->
+            <g data-stage="1">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M42 42 C100 40.4 180 41.8 238 41.2 C239.6 54 238.8 72 238.2 84.6 C180 86.3 100 85.1 42.4 85.2 C41.2 72 41.6 55 42 42 Z"/>
+              <path class="draw" pathLength="1" stroke="var(--stroke-2)" stroke-width="1" d="M43.2 43.4 C101 42 179 43.2 236.8 42.6 C238.2 55 237.6 71 237 83.2 C179 84.8 101 83.8 43.6 83.9 C42.6 71 42.9 56 43.2 43.4 Z" opacity=".5"/>
+              <text x="58" y="69" font-size="14" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.18em">1.0 IDEA</text>
+              <text x="160" y="69" font-size="10" fill="var(--ink-4)" style="font-family:var(--mono)">one sentence</text>
+            </g>
+            <!-- arrow 1→2 -->
+            <g data-stage="2">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M140 88 C143 100 138 108 141 118"/>
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M134 111 L141 120 L147.5 110.4"/>
+            </g>
+            <!-- stage 2 — SCRIPT -->
+            <g data-stage="2">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M42 126 C100 124.5 180 125.8 238 125.2 C239.5 138 238.9 156 238.3 168.6 C180 170.2 100 169 42.5 169.2 C41.3 156 41.6 139 42 126 Z"/>
+              <text x="58" y="153" font-size="14" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.18em">2.0 SCRIPT</text>
+              <text x="170" y="153" font-size="10" fill="var(--ink-4)" style="font-family:var(--mono)">fact-check</text>
+            </g>
+            <!-- arrow 2→3 -->
+            <g data-stage="3">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M140 172 C137 184 142 192 139 202"/>
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M133 195 L139 204 L146 194.6"/>
+            </g>
+            <!-- stage 3 — STORYBOARD -->
+            <g data-stage="3">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M42 210 C100 208.4 180 209.8 238 209.2 C239.6 222 238.8 240 238.2 252.6 C180 254.3 100 253.1 42.4 253.2 C41.2 240 41.6 223 42 210 Z"/>
+              <text x="58" y="237" font-size="14" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.18em">3.0 STORYBOARD</text>
+              <text x="262" y="230" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">9:16 · 16:9</text>
+              <path class="draw" pathLength="1" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4" d="M240 226 L258 226"/>
+            </g>
+            <!-- arrow 3→4 -->
+            <g data-stage="4">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M140 256 C143 268 138 276 141 286"/>
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M134 279 L141 288 L147.5 278.4"/>
+            </g>
+            <!-- stage 4 — RENDER + mac sketch -->
+            <g data-stage="4">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M42 294 C100 292.5 180 293.8 238 293.2 C239.5 306 238.9 324 238.3 336.6 C180 338.2 100 337 42.5 337.2 C41.3 324 41.6 307 42 294 Z"/>
+              <text x="58" y="321" font-size="14" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.18em">4.0 RENDER</text>
+              <!-- tiny mac -->
+              <path class="draw" pathLength="1" stroke="var(--stroke-2)" stroke-width="1.5" d="M282 300 L344 299.4 L344.6 332 L282.4 332.6 Z M302 338 C314 336.9 322 337.6 326 337.2 M294 343 L334 342.4"/>
+              <text x="284" y="356" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">your device</text>
+              <path class="draw" pathLength="1" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4" d="M240 315 L278 315"/>
+            </g>
+            <!-- arrow 4→5 -->
+            <g data-stage="5">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M140 340 C137 352 142 360 139 370"/>
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M133 363 L139 372 L146 362.6"/>
+            </g>
+            <!-- stage 5 — PUBLISH + phone -->
+            <g data-stage="5">
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M42 378 C100 376.4 180 377.8 238 377.2 C239.6 390 238.8 408 238.2 420.6 C180 422.3 100 421.1 42.4 421.2 C41.2 408 41.6 391 42 378 Z"/>
+              <text x="58" y="405" font-size="14" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.18em">5.0 PUBLISH</text>
+              <!-- tiny phone -->
+              <path class="draw" pathLength="1" stroke="var(--stroke-2)" stroke-width="1.5" d="M298 376 L322 375.6 L322.6 428 L298.4 428.5 Z M306 422 C310 421.6 312 421.8 314 421.6"/>
+              <text x="284" y="444" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">your phone · your IP</text>
+              <path class="draw" pathLength="1" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4" d="M240 399 L294 399"/>
+              <!-- the gate -->
+              <text x="58" y="466" font-size="11" fill="var(--ink-2)" style="font-family:var(--mono)">→ gate: YOURS</text>
+              <text x="58" y="492" font-size="12" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.12em">published</text>
+              <!-- dock target: star missing its spark (traveler arrives at translate(286,378) → lands at ~(146,492) rel) -->
+              <path class="draw" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M146 478.2 C148 487 151.6 491 157.8 491.8 L155.6 492.8 L157.9 493.7 C151.6 494.8 148.1 498.4 146.4 507.4 C144.8 498.5 140.7 494.5 131.8 492.9 C140.8 491.2 144.7 487.2 146 478.2 Z"/>
+            </g>
+            <text x="42" y="540" font-size="10" fill="var(--ink-4)" style="font-family:var(--mono);letter-spacing:.16em">FIG. 2 — THE LOOP · PLATE 1 OF 1</text>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg><svg class="rule"><use href="#rule-wob"/></svg></div>
+
+<!-- ── 3.5 Fig. 3 — trust boundary ───────────────────────────── -->
+<section data-folio="§ — FIG. 3 TRUST">
+  <div class="wrap">
+    <p class="eyebrow rv" style="margin-bottom:28px"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>THE TRUST BOUNDARY</p>
+    <figure class="plate fig3-wrap rv" style="margin:0;position:relative">
+      <svg class="ticks" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor"><path d="M0 3 L0 0 L2.2 0 M97.8 0 L100 0 L100 3 M100 97 L100 100 L97.8 100 M2.2 100 L0 100 L0 97" vector-effect="non-scaling-stroke" style="stroke-width:1px"/></svg>
+      <svg class="fig3" viewBox="0 0 760 360" fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Hand-drawn map: an empty crossed-out region labeled their cloud, and your fleet — your Mac renders, your phone posts, flat JSON on your disk, your tokens stay home.">
+        <!-- boundary -->
+        <path class="draw d1" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M268 18 C264 80 272 160 266 240 C262 290 268 322 266 344"/>
+        <text x="34" y="40" font-size="11" fill="var(--ink-3)" style="font-family:var(--mono);letter-spacing:.2em">THEIR CLOUD</text>
+        <text x="300" y="40" font-size="11" fill="var(--ink-1)" style="font-family:var(--mono);letter-spacing:.2em">YOUR FLEET</text>
+        <!-- their cloud: one hachured box, struck through -->
+        <g>
+          <path class="draw d2" pathLength="1" stroke="var(--stroke-2)" stroke-width="1.5" d="M62 120 C100 118.6 140 119.8 178 119.2 C179.4 138 178.8 168 178.2 188.6 C140 190.2 100 189.1 62.4 189.2 C61.2 168 61.6 139 62 120 Z"/>
+          <g stroke="var(--stroke-3)" stroke-width="1">
+            <path class="draw d3" pathLength="1" d="M70 186 L130 122 M88 188 L148 124 M106 189 L166 125 M124 189 L178 132 M142 189 L178 150 M70 168 L112 122 M70 150 L94 122 M160 189 L178 168"/>
+          </g>
+          <path class="draw strike" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M44 96 C90 130 150 178 196 212 M196 98 C152 132 90 180 46 210"/>
+          <text x="50" y="248" font-size="19" fill="var(--ink-3)" style="font-family:var(--hand)" transform="rotate(-2 50 248)">nothing of yours lives here</text>
+        </g>
+        <!-- your fleet -->
+        <g>
+          <!-- mac -->
+          <path class="draw d2" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M318 96 L448 94.8 L449 178 L318.8 179.4 Z M360 188 C390 186.6 408 187.7 418 187.1 M344 196 L424 194.8"/>
+          <text x="332" y="216" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">renders</text>
+          <!-- phone -->
+          <path class="draw d3" pathLength="1" stroke="var(--stroke-1)" stroke-width="1.5" d="M520 110 L568 109.2 L569 196 L520.8 197 Z M536 188 C540 187.6 544 187.8 548 187.6"/>
+          <text x="522" y="216" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">posts</text>
+          <!-- arrow mac→phone -->
+          <path class="draw d4" pathLength="1" stroke="var(--stroke-2)" stroke-width="1.5" d="M454 140 C478 132 496 136 512 146"/>
+          <path class="draw d4" pathLength="1" stroke="var(--stroke-2)" stroke-width="1.5" d="M504 138 L514 147 L502 150"/>
+          <!-- disk -->
+          <g stroke="var(--stroke-1)" stroke-width="1.5">
+            <path class="draw d5" pathLength="1" d="M620 122 C620 116 668 115.4 668 121.4 C668.6 140 668.2 164 668 176 C668 182 620.4 182.6 620.4 176.6 C620 158 620.2 140 620 122 Z"/>
+            <path class="draw d5" pathLength="1" d="M620 122 C620 128 668 127.4 668 121.6"/>
+          </g>
+          <text x="612" y="216" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">flat JSON</text>
+          <!-- key -->
+          <g stroke="var(--stroke-2)" stroke-width="1.5">
+            <path class="draw d6" pathLength="1" d="M340 268 C340 258 354 257 355 266 C356 274 342 276 340 268 Z M356 266 L408 264.8 M384 265 L384.6 274 M398 264.6 L398.5 276"/>
+          </g>
+          <text x="340" y="298" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">your tokens — kept at home</text>
+          <!-- ip -->
+          <text x="520" y="268" font-size="10" fill="var(--ink-3)" style="font-family:var(--mono)">your IP, your accounts</text>
+          <path class="draw d6" pathLength="1" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4" d="M544 230 L544 254"/>
+        </g>
+        <text x="34" y="338" font-size="10" fill="var(--ink-4)" style="font-family:var(--mono);letter-spacing:.16em">FIG. 3 — TRUST BOUNDARY</text>
+      </svg>
+    </figure>
+    <ul class="bullets rv">
+      <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg>nothing publishes without your gate</li>
+      <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg>the mission loop runs until you stop it</li>
+      <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg>your machines do the work</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 3.6 §6.0 specification — create · publish · grow ──────── -->
+<section id="spec" data-folio="§ 6.0 — SPECIFICATION">
+  <div class="wrap">
+    <p class="eyebrow rv"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>6.0 — SPECIFICATION</p>
+    <h2 class="slogan rv"><span class="w">Create.<svg viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path class="draw" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M3 8 C30 5.6 62 7.4 90 5.8 C100 5.2 110 6.4 117 5.6"/></svg></span> <span class="w">Publish.<svg viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path class="draw" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M2 7 C34 9 66 5.4 94 7.6 C104 8.2 112 6.8 118 7.4"/></svg></span> <span class="w">Grow.<svg viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path class="draw" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M3 6.4 C28 8.4 60 6 88 8 C100 8.8 110 7 117 8.2"/></svg></span></h2>
+    <p class="spec-intro rv">Socheli is the open-source social media manager. One engine runs the whole loop, from a one-sentence idea to a posted video to the lesson it leaves behind in the brand's genome.</p>
+
+    <div class="triptych">
+      <div class="trip rv">
+        <svg class="ticon" viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path class="draw" pathLength="1" d="M30 64 C42 48 60 28 76 14 C79 11.4 84 14 81.6 17.6 C68 35 50 53 34 67 C31 69.4 28.4 67 30 64 Z"/>
+          <path class="draw" pathLength="1" d="M30 64 L26 72 L34 67.4" stroke="var(--stroke-2)"/>
+          <path class="draw" pathLength="1" d="M62 26 L70 33" stroke="var(--stroke-3)" stroke-width="1"/>
+          <path class="draw" pathLength="1" d="M14 70 C28 68.8 46 69.6 60 68.8" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4"/>
+        </svg>
+        <h3>Create</h3>
+        <ul class="bullets-v">
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>one idea becomes script, voice, music, and b-roll in a single run</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>storyboard-first Remotion renders, 9:16 vertical and 16:9 long-form<sup class="fnm"><a class="fn" href="#fn-1"><svg aria-hidden="true"><use href="#mk-spark"/></svg>1</a></sup></span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>fact-check and QA passes challenge every claim before render</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>mood system, native motion graphics, and generated thumbnails</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>a Brand Genome per channel: learned hooks, topics, formats, voice</span></li>
+        </ul>
+      </div>
+      <div class="trip rv">
+        <svg class="ticon" viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path class="draw" pathLength="1" d="M10 42 C36 32 62 22 88 12 C74 28 62 44 52 62 C48 52 42 46 32 44 C24 43 16 42.6 10 42 Z"/>
+          <path class="draw" pathLength="1" d="M52 62 L50 74 L58 60" stroke="var(--stroke-2)"/>
+          <path class="draw" pathLength="1" d="M88 12 C70 26 54 38 34 44" stroke="var(--stroke-3)" stroke-width="1"/>
+        </svg>
+        <h3>Publish</h3>
+        <ul class="bullets-v">
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>posts from your own devices, on your own accounts, over your own IP</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>a human gate before anything goes live, unless you open it on purpose</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>a scheduler that learns the posting times your audience actually keeps</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>Instagram, YouTube, and TikTok, with covers and per-platform packaging</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>comment-to-DM triggers and an AI responder for DMs and comments</span></li>
+        </ul>
+      </div>
+      <div class="trip rv">
+        <svg class="ticon" viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path class="draw" pathLength="1" d="M12 70 C12 52 12.6 34 12 16 M12 70 C34 70.6 60 69.6 86 70"/>
+          <path class="draw" pathLength="1" d="M18 60 C30 54 38 44 48 38 C54 34.8 60 40 66 32 C72 24 78 18 84 12"/>
+          <path class="draw" pathLength="1" d="M76 12.6 L85 11 L83.4 20" stroke="var(--stroke-2)"/>
+          <path class="draw" pathLength="1" d="M48 38 L48 70 M66 32 L66 70" stroke="var(--stroke-3)" stroke-width="1" stroke-dasharray="1 4"/>
+        </svg>
+        <h3>Grow</h3>
+        <ul class="bullets-v">
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>a verified research harness: sweep, cross-check, cite, then plan</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>algorithm playbooks per platform fill a dated content calendar</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>missions: the always-on manager loop that works while you don't</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>per-post insights feed engagement lessons back into the genome</span></li>
+          <li><svg aria-hidden="true"><use href="#mk-glyph"/></svg><span>genome evolution stays gated: you approve what the brand learns</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="surfaces-line rv">every capability, all five surfaces: CLI · HTTP API · MCP · SDK · copilot — ~130 tools, one registry · license: MIT packages<sup class="fnm"><a class="fn" href="#fn-2"><svg aria-hidden="true"><use href="#mk-spark"/></svg>2</a></sup> · github.com/Socheli</p>
+
+    <div class="refusals rv">
+      <h3>Socheli does not</h3>
+      <ul>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3 3.6 C6.4 7 10 10.4 13 13"/><path class="draw" pathLength="1" d="M13.2 3 C9.8 6.6 6.4 10 3.2 13.2"/></svg>render in our cloud</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3.2 3.2 C6.6 6.8 9.8 10 13.2 13.4"/><path class="draw" pathLength="1" d="M13 3.4 C9.6 6.8 6.2 10.2 3 13"/></svg>hold your tokens</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3 3.4 C6.2 6.8 9.6 10.2 13 13.2"/><path class="draw" pathLength="1" d="M13.4 3.2 C10 6.6 6.6 10 3.4 13.4"/></svg>post without your gate</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3.4 3 C6.6 6.6 10 10 13.2 13.2"/><path class="draw" pathLength="1" d="M13 3 C9.8 6.4 6.4 9.8 3.2 13.4"/></svg>phone home</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3 3.2 C6.4 6.6 9.8 10 13.4 13.2"/><path class="draw" pathLength="1" d="M13.2 3.4 C9.8 6.8 6.4 10.2 3 13.2"/></svg>require a database</li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path class="draw" pathLength="1" d="M3.2 3.4 C6.6 6.8 10 10.2 13.2 13"/><path class="draw" pathLength="1" d="M13.4 3 C10 6.4 6.6 9.8 3.4 13.2"/></svg>run analytics on this page<sup class="fnm"><a class="fn" href="#fn-3"><svg aria-hidden="true"><use href="#mk-spark"/></svg>3</a></sup></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3.7 §7.0 questions ────────────────────────────────────── -->
+<section data-folio="§ 7.0 — QUESTIONS">
+  <div class="wrap">
+    <p class="eyebrow rv" style="margin-bottom:20px"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>7.0 — QUESTIONS</p>
+    <div class="faq rv">
+      <div class="qa"><h3>Does it need my API keys?</h3><p>Yes, your own. Model and voice providers are called with keys you supply, stored in a local .env on your machine. There is no Socheli server in the loop to send them to.</p></div>
+      <div class="mini-div" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg></div>
+      <div class="qa"><h3>Why my own devices?</h3><p>Rendering is compute you already own, and publishing from your own phone on your own IP means your accounts behave like accounts, not like an API farm. Ownership is the architecture, not a feature flag.</p></div>
+      <div class="mini-div" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg></div>
+      <div class="qa"><h3>What does Meta App Review see?</h3><p>Socheli requests Instagram permissions through Meta's standard OAuth, per workspace. Tokens are stored as flat JSON on the user's own device and are deletable by the user at any time. See <a href="/privacy">Privacy</a> and <a href="/data-deletion">Data Deletion</a>.</p></div>
+      <div class="mini-div" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg></div>
+      <div class="qa"><h3>What happens when I stop it?</h3><p>The mission loop halts at the next tick. Nothing renders, nothing posts, nothing phones home. Your data is flat JSON on your disk. Delete the folder and it's gone.</p></div>
+      <div class="mini-div" aria-hidden="true"><svg class="rule"><use href="#rule-wob"/></svg><svg class="dstar"><use href="#mk-glyph"/></svg></div>
+      <div class="qa"><h3>What's the license?</h3><p>MIT. The CLI, SDK, MCP, and API packages are public on GitHub and npm today; the engine core opens with the public launch. The terms are written in plain language at <a href="/terms">/terms</a>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3.8 footnotes ─────────────────────────────────────────── -->
+<div class="footnotes" data-folio="§ — FOOTNOTES">
+  <div class="wrap"><ol>
+    <li id="fn-1"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>1 — timings measured on the maintainer’s own laptop; unedited log at Fig. 1, run concept_20260611090005 · commit <span data-stamp="commit">248dfa5</span></span></li>
+    <li id="fn-2"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>2 — MIT on the published packages (@socheli/cli, sdk, mcp, api); the engine core repository opens with the public launch</span></li>
+    <li id="fn-3"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>3 — verify in your DevTools network tab — this claim is checkable</span></li>
+  </ol></div>
+</div>
+
+<!-- ── colophon — the dawn close ─────────────────────────────── -->
+<section class="colophon" id="colophon" data-folio="§ — COLOPHON">
+  <div class="wrap">
+    <svg class="fleuron" aria-hidden="true"><use href="#mk-rough"/></svg>
+    <h2>Don't take our word. Take the repo.</h2>
+    <div class="cmd-inverse" id="clone-cta"><span><span class="ps">$</span> npm i -g @socheli/cli</span>
+      <button type="button" data-copy="npm i -g @socheli/cli" aria-label="Copy install command"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>copy</span></button>
+    </div>
+    <p class="colo-meta">This page is <span data-stamp="kb">78</span>KB, makes <span data-stamp="req">6</span> requests, and loads no trackers.<br>Set in Inter &amp; JetBrains Mono. <svg style="display:inline-block;width:10px;height:10px;vertical-align:-1px" aria-hidden="true"><use href="#mk-glyph"/></svg> END OF DOCUMENT SOC-001</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ── 3.9 footer ────────────────────────────────────────────── -->
+<footer>
+  <svg class="foot-mark" aria-hidden="true"><use href="#mk-rough"/></svg>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><h4>Product</h4><ul>
+        <li><a href="#ch-1">Manual</a></li>
+        <li><a href="#spec">Specification</a></li>
+        <li><a href="#colophon">Colophon</a></li>
+      </ul></div>
+      <div><h4>Open source</h4><ul>
+        <li><a href="https://github.com/Socheli" rel="me">GitHub</a></li>
+        <li><a href="https://www.npmjs.com/org/socheli">npm: @socheli</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+      </ul></div>
+      <div><h4>Legal</h4><ul>
+        <li><a href="/privacy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms of Service</a></li>
+        <li><a href="/data-deletion">Data Deletion</a></li>
+      </ul></div>
+      <div><h4>Contact</h4><ul>
+        <li><a href="mailto:contact@socheli.com">contact@socheli.com</a></li>
+      </ul></div>
+    </div>
+    <p class="foot-bottom">© Socheli · github.com/Socheli · DOC SOC-001 REV A</p>
+  </div>
+</footer>
+
+<script src="/assets/js/manual.js" defer></script>
+</body>
+</html>

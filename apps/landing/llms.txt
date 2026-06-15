@@ -1,0 +1,11 @@
+# Socheli
+
+> Open-source content engine: one idea in — a scripted, voiced, rendered vertical
+> video out, published autonomously from the user's own devices and accounts.
+
+- Landing / field manual: https://socheli.com/
+- GitHub: https://github.com/Socheli
+- npm: https://www.npmjs.com/org/socheli
+- Privacy: https://socheli.com/privacy
+- Data deletion: https://socheli.com/data-deletion
+- Contact: contact@socheli.com

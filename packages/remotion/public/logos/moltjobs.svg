@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <g fill="#FF4400" filter="url(#glow)" transform="translate(8, 95)">
+    <rect x="271" y="146" width="466" height="48"/>
+    <rect x="271" y="146" width="48"  height="492"/>
+    <rect x="271" y="590" width="466" height="49"/>
+    <rect x="689" y="146" width="48" height="152"/>
+    <rect x="689" y="417" width="48" height="222"/>
+  </g>
+</svg>

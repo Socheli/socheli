@@ -1,0 +1,16 @@
+import "./env.ts";
+import { importVideo } from "./ingest.ts";
+import { buildUnderstanding, understandingSummary } from "./understanding.ts";
+const fixture = "data/renders/socheli_20260613182657.mp4";
+console.log("=== INGEST ===", new Date().toISOString());
+const item = await importVideo(fixture, { channel: "labrinox" });
+const p = item.source?.probe;
+console.log("ingested id:", item.id, "| kind:", item.kind, "| status:", item.status);
+console.log("probe:", p?.video?.width + "x" + p?.video?.height, p?.video?.codec, (p?.video?.fps)+"fps", p?.durationSec?.toFixed(1)+"s", "audio:", p?.hasAudio);
+console.log("\n=== UNDERSTAND (transcribe + shots + analysis) ===");
+const u = await buildUnderstanding(item.id);
+console.log("transcript words:", u.transcript.words.length, "| segments:", u.transcript.segments.length);
+console.log("first transcript text:", u.transcript.text.slice(0, 120));
+console.log("shots:", u.shots.length, "| speakers:", u.speakers.length, "| highlights:", u.highlights.length, "| deadAir:", u.deadAir.length, "| filler:", u.filler.length);
+console.log("\n=== UNDERSTANDING SUMMARY (what Soli reads) ===");
+console.log(understandingSummary(u).slice(0, 700));

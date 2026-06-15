@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Pre-push identity guard (P0: prevent deanonymization on a public repo).
+# Refuses to push any commit authored/committed under a non-Socheli identity.
+# Install:  cp scripts/git-hooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+set -euo pipefail
+
+ALLOWED_EMAIL="contact@socheli.com"
+bad=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range_args="$local_sha --not --remotes"   # new branch: all reachable-but-unpushed
+  else
+    range_args="$remote_sha..$local_sha"
+  fi
+  while IFS='|' read -r ae ce; do
+    if [ "$ae" != "$ALLOWED_EMAIL" ] || [ "$ce" != "$ALLOWED_EMAIL" ]; then
+      echo "✗ pre-push blocked: commit by non-Socheli identity (author=$ae committer=$ce)." >&2
+      bad=1
+    fi
+  done < <(git log --format='%ae|%ce' $range_args 2>/dev/null)
+done
+
+if [ "$bad" = 1 ]; then
+  echo "  Fix: git config user.email $ALLOWED_EMAIL && git config user.name Socheli" >&2
+  echo "  (rewrite offending commits before pushing to a public remote)." >&2
+  exit 1
+fi
+exit 0

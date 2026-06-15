@@ -1,0 +1,108 @@
+/* ============================================================================
+   EXECUTION TIMELINE (.exec-) — Soli's LIVE turn as an ordered ink rail
+   ============================================================================
+   Shown WHILE a turn is streaming (the last assistant message): reasoning
+   beats and tool calls in arrival order, each a node on a hand-drawn vertical
+   rail (the same stamp/connector grammar as the .reason- trace and the timeline
+   block). A settled tool step shows its RICH RESULT (real UIBlocks) inline
+   beneath it. New steps animate in via the shared .blk-stamp / .blk-in /
+   .ink-drawable keyframes (defined in globals.css); this file only lays out and
+   tones the .exec- pieces. Reduced motion is handled globally by those shared
+   classes, so nothing here introduces its own motion. */
+
+.exec {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 2px;
+}
+
+/* the rail: a quiet dashed spine on the left, nodes hung off it */
+.exec-body-rail {
+  margin: 2px 0 4px;
+  padding-left: 2px;
+  padding-top: 2px;
+  border-left: 1px dashed color-mix(in srgb, var(--border-subtle) 80%, transparent);
+}
+
+.exec-node {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 9px;
+}
+.exec-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+}
+.exec-glyph {
+  display: inline-flex;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.exec-node.is-tool .exec-glyph { color: var(--text-light); }
+.exec-rail-line {
+  flex: 1;
+  width: 8px;
+  min-height: 14px;
+  color: var(--border-interactive);
+  overflow: visible;
+}
+.exec-body {
+  min-width: 0;
+  padding-bottom: 11px;
+}
+.exec-node:last-child .exec-body { padding-bottom: 2px; }
+
+/* a reasoning beat — dim, conversational; the live "thought" reads as prose */
+.exec-beat {
+  margin: 1px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* a tool step */
+.exec-tool { min-width: 0; }
+
+/* the tool header line shown ABOVE a rich result (mono name + status mark).
+   When there is no rich result we fall back to the standard ToolCallChip, which
+   carries its own head — these rules apply only to the rich-result variant. */
+.exec-tool-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1px 0 5px;
+}
+.exec-tool-name {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.exec-tool-mark { display: inline-flex; align-items: center; flex-shrink: 0; }
+.exec-tool-mark.running { color: var(--text-secondary); }
+.exec-tool-mark.done { color: var(--success); }
+.exec-tool-mark.error { color: var(--error); }
+.exec-spin { width: 13px; height: 13px; animation: cp-rot 1.4s linear infinite; }
+
+/* the rich result blocks sit just under the tool head, tucked against the rail */
+.exec-tool-viz { margin-top: 1px; }
+.exec-tool-viz .gu-blocks { margin: 0; }
+
+/* a fallback ToolCallChip inside the rail loses its own left rail (the exec
+   rail owns the spine) and tightens, matching how the reason trace nests it */
+.exec-tool > .cp-tool { border-left: 0; border-radius: 7px; }
+.exec-tool > .cp-tool .cp-tool-head { padding: 3px 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .exec-spin { animation: none; }
+}

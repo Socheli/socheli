@@ -1,0 +1,201 @@
+/* ============================================================================
+   mobile-chat.css — Builder B's dedicated mobile stylesheet
+   ============================================================================
+   Mobile (≤900px primary, ≤560px small-phone) overrides for the copilot +
+   chat surfaces and the ~52 UI blocks. ALL new @media rules for these surfaces
+   live HERE (never in globals.css). Imported once in app/layout.tsx.
+
+   Scope (Builder B owns these):
+     · the Cmd+K copilot panel  (.cp-panel / .cp-toggle / .cp-head)
+     · the /soli page + history rail  (.soli-*, .thr-*)
+     · the composer  (.cp-composer / .cmp-* / .cp-textarea / popovers)
+     · the domain/widget UI blocks  (.blk-* / .gu-* / .jt / .exec / .reason)
+
+   The repo already carries a 760px pass in globals.css; these rules RAISE the
+   breakpoint to 900px, harden the few targets that the older pass missed
+   (panel-as-sheet, scrim, 40px touch targets the .cmp-field specificity was
+   overriding), and add iOS safe-area insets. Reduced-motion safe throughout —
+   the only motion added is the panel/scrim fade, which is disabled below.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── 1 + 6. COPILOT PANEL → full-screen sheet on mobile (≤900px) ────────────
+   Desktop: a 480px right-docked aside. The old code left `max-width: 96vw`,
+   stranding a ~15px unclickable strip on a 375px phone. On mobile the panel
+   becomes a true full-bleed sheet: full width AND height, no rounded gap, the
+   close (X) is a ≥40px target, and a tap-scrim sits behind it. Safe-area insets
+   keep the composer + the floating toggle clear of the iOS home indicator. */
+@media (max-width: 900px) {
+  /* the panel itself: edge-to-edge sheet */
+  .cp-panel {
+    width: 100vw;
+    max-width: 100vw;
+    border-left: 0;
+    box-shadow: none;
+    /* keep the composer above the home indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* the squeeze never applies on mobile (the sheet overlays full-width) */
+  body.cp-pushed .layout,
+  body.cp-pushed .editor { margin-right: 0 !important; }
+
+  /* a tap-to-dismiss scrim behind the open panel — drawn as the panel's own
+     ::before so it needs no markup change and disappears with the panel. The
+     panel is z-index 70; the scrim sits just under the sheet but over the page.
+     pointer-events are off until open so the closed (offscreen) sheet's scrim
+     never blocks the page. */
+  .cp-panel::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(6, 6, 6, 0.55);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+  .cp-panel.open::before { opacity: 1; pointer-events: auto; }
+
+  /* head: roomier, the X (and every head button) a real ≥40px touch target */
+  .cp-head { padding: 12px 12px 12px 16px; }
+  .cp-head .cp-icon-btn { width: 40px; height: 40px; }
+
+  /* composer: lift the bottom padding above the safe-area inset too */
+  .cp-composer { padding-bottom: max(14px, env(safe-area-inset-bottom, 14px)); }
+}
+
+/* the floating Cmd+K toggle respects the iOS home indicator (all sizes) */
+.cp-toggle { bottom: max(22px, calc(22px + env(safe-area-inset-bottom, 0px))); }
+
+/* ── 2. /soli HISTORY RAIL → overlay drawer on mobile (≤900px) ──────────────
+   The old code only flipped the rail to an overlay at ≤760px; between 760–900px
+   it was still an inline 234px column that broke the layout. Raise it to 900px
+   and add a tap-scrim so the chat column is genuinely full-width and tapping
+   off the drawer (or picking a thread — handled in SoliPage) closes it.
+   The .thr-rail-open width override + the .open drawer box are restated here so
+   the whole 760–900px band behaves like the phone band. */
+@media (max-width: 900px) {
+  .soli-page.thr-rail-open { max-width: 820px; }
+  .thr-body { position: relative; }
+  .thr-rail.open {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    width: min(82vw, 264px);
+    padding: 14px;
+    margin-right: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+  }
+  /* scrim behind the open drawer — the .thr-body::after, shown only while the
+     page carries .thr-rail-open. Picking a thread closes the drawer in SoliPage
+     (pickThread); the scrim is the visual dimmer over the chat behind it. */
+  .soli-page.thr-rail-open .thr-body::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: rgba(6, 6, 6, 0.45);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    pointer-events: none;
+  }
+  /* the chat column stays full-width under the floating drawer */
+  .thr-body .soli-chat { flex: 1; min-width: 0; }
+
+  /* ≥40px touch targets in the rail + page head */
+  .thr-new { min-height: 44px; }
+  .thr-row-main { min-height: 44px; }
+  .thr-del { width: 40px; height: 40px; right: 2px; }
+  .soli-head .cp-icon-btn,
+  .thr-menu-wrap .cp-icon-btn { width: 40px; height: 40px; }
+}
+
+/* ── 3. COMPOSER on narrow — buttons hit 40px, field + popovers stay on-screen
+   The .cmp-field .cmp-btn rule in globals (specificity 0,2,0) was overriding the
+   older 760px .cmp-btn bump (0,1,0) back down to 34px, so the touch targets were
+   never actually growing on mobile. Re-assert them at matched specificity here.
+   The popovers (.cmp-pop) are already clamped to the composer box (left/right
+   14px, or 0 inside .soli-chat) so they can never clip off the right edge — we
+   just cap their height so they fit above the keyboard. */
+@media (max-width: 900px) {
+  .cmp-field .cmp-btn,
+  .cmp-field .cp-send { width: 40px; height: 40px; }
+  /* the textarea keeps its flex but never collapses under the buttons */
+  .cmp-field .cp-textarea { min-height: 40px; }
+  /* popovers: clamp height so the palette/picker fit on a short viewport */
+  .cmp-pop { max-height: min(46vh, 320px); overflow-y: auto; }
+  .cmp-pop-scroll { max-height: min(40vh, 264px); }
+  /* the inline mic note never pushes the field off-screen */
+  .cmp-note { padding-top: 6px; }
+}
+
+/* small-phone (≤560px): tighten the composer chrome so the row never wraps */
+@media (max-width: 560px) {
+  .cmp-field { padding: 3px; }
+  .cmp-fieldrow { gap: 2px; }
+  .cmp-field .cp-textarea { padding-left: 4px; padding-right: 4px; }
+  .cmp-chip { max-width: 180px; }
+}
+
+/* ── 4. MESSAGE BUBBLES — tighten the user bubble measure on small phones ────
+   The assistant bubble is already full-width; the user bubble caps at 90%
+   (panel) / 78% (page). On a 360px phone that still reads as a near-full-width
+   block, so pull it in a touch for the chat-as-conversation rhythm. */
+@media (max-width: 560px) {
+  .cp-msg.user .cp-bubble { max-width: 86%; }
+  .soli-chat .cp-msg.user .cp-bubble { max-width: 84%; }
+}
+
+/* ── 4 (blocks). Reflow guards at ≤560px ─────────────────────────────────────
+   The block set already reflows cleanly at 360px (verified on /dev/blocks:
+   board stacks, calendar grids use minmax(0,1fr), scorecard collapses, the
+   pipeline + tables scroll internally, the html iframe is full-width). These
+   are belt-and-suspenders caps for the few grids the older pass left wide-ish
+   on the very smallest phones — none introduce horizontal page overflow. */
+@media (max-width: 560px) {
+  /* calendar week: keep day columns from collapsing/overflowing */
+  .blk-cal { min-width: 0; }
+  .blk-cal-day { min-width: 0; }
+  /* calendar month: let the day cells go compact (7 fixed columns) so the grid
+     fits 360px; event titles already ellipsize */
+  .blk-cm-grid { gap: 2px; }
+  .blk-cm-cell { min-height: 30px; padding: 1px 2px; }
+  /* post_card: shrink the 9:16 poster a touch so the meta column keeps room */
+  .blk-pc { gap: 9px; }
+  .blk-pc-poster { width: 64px; }
+  /* any block-embedded table scrolls inside its own wrapper, never the page */
+  .gu-table-wrap { max-width: 100%; }
+}
+
+/* ── 5. EXECUTION TIMELINE / REASONING TRACE / TASKS on narrow ───────────────
+   All three hang content off a thin (16px) ink rail with min-width:0 bodies, so
+   they already fit. These caps keep the rich tool-result blocks tucked inside
+   the rail (never wider than the gutter leaves) and let long mono tool names
+   ellipsize instead of pushing the row wide on a phone. */
+@media (max-width: 900px) {
+  .exec, .exec-body, .exec-tool, .exec-tool-viz { min-width: 0; max-width: 100%; }
+  .exec-tool-viz .gu-blocks { min-width: 0; }
+  /* reasoning trace bodies stay inside the column */
+  .reason-node-body { min-width: 0; }
+}
+
+/* json_tree on narrow: the depth rails already indent 16px/level inside a
+   scroll-capped body, and long values wrap (overflow-wrap:anywhere). On a phone
+   keep the header actions from wrapping and trim the per-level indent slightly
+   so deep trees stay readable without a runaway left gutter. */
+@media (max-width: 560px) {
+  .jt-children { margin-left: 12px; padding-left: 7px; }
+  .jt-head { flex-wrap: wrap; gap: 6px; }
+  .jt-head-actions { margin-left: auto; }
+}
+
+/* ── reduced motion: drop the panel/scrim fades (everything else is static) ── */
+@media (prefers-reduced-motion: reduce) {
+  .cp-panel::before { transition: none; }
+}

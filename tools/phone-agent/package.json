@@ -1,0 +1,14 @@
+{
+  "name": "socheli-phone-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local operator agent that drives the social apps on a physical Android (via ADB) to POST finished Socheli videos — a publish backend that needs no platform API approval or public host.",
+  "bin": {
+    "socheli-phone": "src/run.mjs"
+  },
+  "scripts": {
+    "doctor": "node src/run.mjs doctor",
+    "publish": "node src/run.mjs publish"
+  }
+}

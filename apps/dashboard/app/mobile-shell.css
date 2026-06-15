@@ -1,0 +1,155 @@
+/* ── mobile-shell.css — Builder A (shell) mobile-friendliness layer ──────────
+   The shell's mobile @media rules live HERE (not globals.css). This sheet is
+   imported LAST in layout.tsx, so its rules win on equal specificity. It only
+   adds/overrides shell chrome — sidebar drawer, header, mega accordion,
+   hyper-search palette, and notch/home-indicator safe areas — across phones
+   (~360–430px) through tablets. Existing breakpoints reused: 900 / 560 / 720.
+   House ink grammar + reduced-motion safe; no new colors, no new deps. */
+
+/* ════════════════════════════════════════════════════════════════════════
+   1 · SIDEBAR DRAWER (≤900px)
+   The off-canvas drawer (body.nav-open / translateX / .nav-scrim) already
+   exists in globals.css. Here we make it thumb-friendly: lock the body scroll
+   while it's open, pad the drawer for notches + the home indicator, and ensure
+   the inline chat-history + mega rows are comfortable to tap.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Lock the page behind the drawer so touch-scroll captures the drawer only,
+     not the content underneath. CSS-only (driven by the body.nav-open class
+     the AppShell already toggles). overscroll-behavior stops scroll chaining. */
+  body.nav-open { overflow: hidden; }
+  body.nav-open .app-content { overflow: hidden; }
+
+  /* The drawer itself: keep it ≤84vw (good on a 375px phone ≈ 268px), and pad
+     the top/bottom into the safe area so the brand row clears a notch and the
+     footer/last history row clears the home indicator. The whole sidebar is one
+     scroll container already — let momentum scrolling carry inside it. */
+  .sidebar {
+    padding-top: calc(12px + env(safe-area-inset-top));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    padding-left: calc(12px + env(safe-area-inset-left));
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Touch-comfortable rail rows inside the drawer — pinned links, category
+     triggers and the CTA all reach ≥40px tall for easy tapping. */
+  .sidebar .sb-link,
+  .sidebar .sb-cat-row { min-height: 42px; }
+  .sidebar .sb-cta { min-height: 44px; }
+
+  /* The hamburger trigger must be ≥40px (it's 32px on desktop). */
+  .hdr-menu.hdr-icon-btn { width: 42px; height: 42px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   2 · MEGA-MENU on touch (≤900px = inline ACCORDION, never a flyout)
+   The Sidebar already gates the flyout out of the DOM on touch and renders the
+   inline accordion. Belt-and-braces here: the fixed flyout panel can never show
+   on a narrow viewport, and the accordion items are tap-sized.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* No flyout panel may ever paint on touch/narrow widths. */
+  .mm-panel { display: none !important; }
+
+  /* Accordion items: compact .sb-mini rows are too short for a thumb — bump
+     them to ≥40px and give a little more horizontal room. */
+  .mm-acc-item.sb-mini { min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
+  .mm-acc { padding-left: 10px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   3 · HEADER (≤900px / ≤560px) — never overflow at 375px
+   globals.css already collapses the crumb root/section, icon-only pills and
+   drops the divider at ≤900px, and hides the org chip at ≤560px. Here we
+   guarantee the row fits on a 375px (and 360px) phone, the breadcrumb current
+   page truncates with an ellipsis, every control is ≥40px, and the header top
+   clears a notch.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Pull the sticky header below the notch + keep a hair of side safe-area. */
+  .app-header {
+    height: calc(var(--hdr-h) + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    padding-left: calc(12px + env(safe-area-inset-left));
+    padding-right: calc(12px + env(safe-area-inset-right));
+    gap: 6px;
+  }
+
+  /* The breadcrumb shows only the current page on mobile (root + section are
+     already hidden); let it shrink and ellipsis instead of pushing the row. */
+  .hdr-crumb { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+  .hdr-crumb-cur { min-width: 0; }
+  /* The leading separator before the (now sole) current crumb is noise. */
+  .hdr-crumb > .hdr-crumb-sep { display: none; }
+
+  /* Touch targets: the search/soli/new pills become ≥40px square icon buttons. */
+  .hdr-search, .hdr-soli, .hdr-new {
+    min-width: 40px; min-height: 40px;
+    align-items: center; justify-content: center;
+  }
+  .hdr-search { padding: 0 9px; }
+}
+
+/* very small phones (≤560px) — the org chip is already hidden in globals; here
+   we shed the search pill too if the row is tight, keeping the essentials:
+   hamburger · current-page crumb · Ask-Soli/⌘K · New-post · user. */
+@media (max-width: 420px) {
+  .app-header { gap: 4px; }
+  .hdr-search { padding: 0 8px; }
+}
+@media (max-width: 360px) {
+  /* At the very narrowest, drop the search pill (⌘/ still works via keyboard,
+     and search lives inside Soli) so nothing overflows. */
+  .app-header .hdr-search { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   4 · HYPER-SEARCH palette on mobile — near-full-screen on phones
+   Desktop: a 640px card floated 12vh down. On phones it should fill the screen:
+   small inset, ~85dvh tall, no horizontal scroll, comfortable on 375px. Esc /
+   backdrop-tap / arrow keys are JS-driven and unaffected.
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .hs-backdrop {
+    /* Small inset all round; lift off the very top for the notch, leave room
+       for the home indicator at the bottom. align-items:flex-start preserved. */
+    padding: calc(16px + env(safe-area-inset-top)) 12px
+             calc(16px + env(safe-area-inset-bottom)) 12px;
+  }
+  .hs-card {
+    max-width: 100%;
+    width: 100%;
+    max-height: 85dvh;
+  }
+  /* Bigger tap targets for the result rows + roomier input on a phone. */
+  .hs-input { font-size: 16px; } /* ≥16px avoids iOS focus zoom */
+  .hs-hit { padding: 11px 10px; }
+}
+@media (max-width: 420px) {
+  .hs-backdrop { padding-left: 8px; padding-right: 8px; }
+  /* Footer hints can crowd on the smallest phones — tighten the gaps. */
+  .hs-foot { gap: 12px; padding: 9px 12px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   5 · SAFE AREAS (consolidated)
+   Header top + sidebar + search bottom are handled above. viewport already has
+   viewportFit=cover, so env(safe-area-inset-*) resolves. The scrim covers the
+   whole inset 0 area (no padding needed — it's a full-bleed backdrop).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════════
+   6 · NO HORIZONTAL OVERFLOW at 360px
+   Guard the shell containers against any child forcing a horizontal scrollbar.
+   Scoped to the shell elements we own (never a blanket * rule).
+   ════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .layout, .app-content, .app-header { max-width: 100vw; overflow-x: hidden; }
+  .app-header { overflow-x: hidden; } /* keep the existing overflow:hidden intent */
+}
+
+/* ── reduced motion: nothing here animates, but keep the contract explicit ── */
+@media (prefers-reduced-motion: reduce) {
+  body.nav-open { /* no animation introduced */ }
+}

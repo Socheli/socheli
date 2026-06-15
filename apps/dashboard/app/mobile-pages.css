@@ -1,0 +1,205 @@
+/* ============================================================================
+   mobile-pages.css — phone responsiveness for the PAGE surfaces (everything
+   under app/ EXCEPT the Sidebar/Header/Shell, the Soli chat (.soli-chat/.cp-*),
+   and the Copilot panel — those live in mobile-shell.css / mobile-chat.css).
+
+   Breakpoints: 900px (tablet/landscape phone) primary · 560px small phone.
+   All rules are reduced-motion safe. House ink only — existing CSS variables.
+
+   The generic .cols-2/3/4 grids already auto-stack in globals.css; this file
+   only fixes genuine overflow on bespoke layouts.
+   ========================================================================== */
+
+/* ───────────────────────────────────────────────────────────────────────────
+   1. POST EDITOR — app/post/[id]/edit/Editor.tsx + TopBar.tsx
+   Desktop is a 3-region workspace: center stage + right dock (.ws-dock-right,
+   the 344px inspector) over a bottom dock (.ws-dock-bottom, the timeline).
+   ≤900px: the stage takes the full width; the two docks collapse off-screen and
+   reappear only as overlay drawers toggled from the top bar (.ed-m-only buttons
+   set .ed-m-inspector-open / .ed-m-timeline-open on .editor). A backdrop
+   (.ed-m-backdrop) dismisses them. Desktop is completely unaffected.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Desktop: the mobile-only toggle buttons + backdrop never show. */
+.ed-m-only { display: none; }
+.ed-m-backdrop { display: none; }
+
+@media (max-width: 900px) {
+  .ed-m-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+  }
+
+  /* Tighten the top bar so the toggles + workspace menu fit a phone. */
+  .ed-top { padding: 0 12px; gap: 8px; }
+  .ed-title { max-width: 38vw; font-size: 14px; }
+  /* The scene/seconds meta + aspect switcher eat width — drop them on phones;
+     aspect is still settable from the inspector once it's a drawer. */
+  .ed-top .ed-meta,
+  .ed-top .aspect-switch { display: none; }
+
+  /* Stage spans the full width; the splitters that resized the docks are
+     meaningless once the docks are overlays. */
+  .ed-stage { padding: 14px; }
+  .ws-splitter { display: none !important; }
+
+  /* RIGHT DOCK → full-height right drawer, hidden by default. The inline
+     width/flex set in Editor.tsx is overridden here. */
+  .ws-dock-right {
+    position: fixed !important;
+    top: 54px;            /* below .ed-top */
+    right: 0;
+    bottom: 0;
+    width: min(344px, 88vw) !important;
+    max-width: 88vw;
+    flex: none !important;
+    z-index: 320;
+    box-shadow: -18px 0 48px rgba(0, 0, 0, 0.55);
+    transform: translateX(102%);
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    overflow-y: auto;
+  }
+  .editor.ed-m-inspector-open .ws-dock-right { transform: translateX(0); }
+
+  /* BOTTOM DOCK → bottom sheet, hidden by default. */
+  .ws-dock-bottom {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: min(58vh, 360px) !important;
+    flex: none !important;
+    z-index: 320;
+    box-shadow: 0 -18px 48px rgba(0, 0, 0, 0.55);
+    transform: translateY(102%);
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .editor.ed-m-timeline-open .ws-dock-bottom { transform: translateY(0); }
+
+  /* Shared scrim behind whichever drawer is open. */
+  .ed-m-backdrop {
+    display: block;
+    position: fixed;
+    inset: 54px 0 0 0;
+    z-index: 310;
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  /* The on-canvas text-move toolbar / tools are absolutely positioned at the
+     edges of the text box and can clip off-screen on a narrow stage. Keep them
+     pinned inside the frame and allow wrapping. */
+  .canvas-text-move { left: 0; right: auto; max-width: 92vw; flex-wrap: wrap; }
+  .canvas-text-tools { flex-wrap: wrap; max-width: 92vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-dock-right,
+  .ws-dock-bottom { transition: none; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   2. CALENDAR + CALENDAR-ADMIN — the 7-col month grid is unreadable ≤560px.
+   CalendarClient.tsx swaps to a single-column agenda list (.cal-agenda, gated
+   by a JS media-query hook). These rules style that list and shrink the
+   calendar-admin month-grid cells so 7 columns still fit a 360px screen.
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Agenda list — only rendered ≤560px by the component. */
+.cal-agenda { display: flex; flex-direction: column; gap: 10px; }
+.cal-agenda .empty { padding: 28px 12px; text-align: center; }
+.cal-agenda-day {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.cal-agenda-day.is-today { border-color: var(--accent); }
+.cal-agenda-date {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--bg-surface);
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+}
+.cal-agenda-date:hover { color: var(--text-primary); }
+.cal-agenda-dow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.cal-agenda-num { font-size: 16px; font-weight: 660; color: var(--text-primary); }
+.cal-agenda-mon {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.cal-agenda-items { display: flex; flex-direction: column; gap: 5px; padding: 8px 10px; }
+.cal-agenda-items:empty { display: none; }
+
+@media (max-width: 560px) {
+  .cal-admin-grid { gap: 2px; font-size: 11px; }
+  .cal-admin-grid .stat-label { font-size: 9px; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   3. SOLI PAGE container (app/page.tsx home) — trim side gutters on small
+   phones so the chat column gets maximum width. Does NOT touch .soli-chat /
+   .cp-* (those are owned by the chat builder).
+   ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .soli-page { padding-left: 4px; padding-right: 4px; }
+  .home-strip { gap: 8px; }
+  .home-chips { margin-left: 0; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   4. POST DETAIL — app/post/[id]/page.tsx. .post-grid is a bespoke 2-col
+   (minmax(300px,440px) + 1fr) that only stacks under the copilot push; stack
+   it on phones too so the 300px media column doesn't force horizontal scroll.
+   The carousel strip already scrolls (overflow-x:auto); thumbs stay fixed-width.
+   ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .post-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   5. SWEEP — bespoke inline grids on misc pages that don't fit a 360px phone.
+   ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  /* connections/RulesEditor.tsx — the 2-col and 3-col rule editor grids. */
+  .rules-grid,
+  .rules-grid-3 { grid-template-columns: 1fr !important; }
+
+  /* ai-dm/AiDmConsole.tsx — thread-list + conversation split → stack, with the
+     thread list capped so it doesn't eat the whole viewport above the chat. */
+  .aidm-split { grid-template-columns: 1fr !important; }
+  .aidm-split > .card:first-child { max-height: 240px; }
+
+  /* research/[id]/RunView.tsx — report + sources rail split → stack. */
+  .research-split { grid-template-columns: 1fr !important; }
+
+  /* concepts/ConceptBoard.tsx — score bars 2-col (96px label + bar + value) is
+     too tight; one per row. */
+  .cb-score-grid { grid-template-columns: 1fr !important; }
+
+  /* ads/BoostWizard.tsx — daily/total budget inputs side-by-side → stack. */
+  .bw-budget-grid { grid-template-columns: 1fr !important; }
+
+  /* new/page.tsx — the 3-up format picker is forced via inline style; stack it
+     on small phones (the .np-fsel base class is 2-up, this override is 3-up). */
+  .np-fsel.np-fsel-3 { grid-template-columns: 1fr !important; }
+}

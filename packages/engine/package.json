@@ -1,0 +1,24 @@
+{
+  "name": "@os/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "content": "src/cli.ts"
+  },
+  "scripts": {
+    "tool": "node --import tsx src/tool.ts",
+    "tools:manifest": "node --import tsx src/tool.ts --manifest"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.169",
+    "@os/remotion": "workspace:*",
+    "@os/schemas": "workspace:*",
+    "@os/tokens": "workspace:*",
+    "@remotion/bundler": "4.0.461",
+    "@remotion/renderer": "4.0.461",
+    "mqtt": "^5.15.1",
+    "zod": "3.24.1"
+  },
+  "license": "AGPL-3.0-only"
+}
