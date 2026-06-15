@@ -53,6 +53,14 @@ async function main() {
       runLocalCli("Socheli content CLI", "packages/engine/src/cli.ts", rest);
       break;
     }
+    case "demo": {
+      // ZERO-AUTH one-liner — forward straight to the local engine's `demo`.
+      // Renders a real 9:16 vertical with NO API keys (canned storyboard +
+      // motion-graphics + synth music + subtitles). Requires the local engine
+      // (monorepo / package that bundles engine tools).
+      runLocalCli("Socheli content CLI", "packages/engine/src/cli.ts", ["demo", ...rest]);
+      break;
+    }
     case "editor": {
       runLocalCli("Socheli editor CLI", "packages/engine/src/editor-cli.ts", rest);
       break;
@@ -184,6 +192,8 @@ async function main() {
       console.log(`socheli — content engine CLI
 
 Local workspace commands:
+  demo "<idea>"                          ZERO-AUTH demo — render a real 9:16
+                                          vertical with NO API keys
   content <cmd>                          run the full local engine CLI
   engine <cmd>                           alias for content
   editor <cmd>                           run local video editor/review tools

@@ -92,11 +92,31 @@ async function getEngineManifest(): Promise<ToolDef[]> {
   return manifestPromise;
 }
 
+/* The public read-only DEMO (AUTH_MODE=demo) must not advertise memory/iCog
+   tools at all: even when ICOG_API_KEY happens to be present, a first-turn
+   message can make the model reach for memory and surface an "iCog not
+   configured"/connection error to a visitor. So in demo mode we drop every
+   memory/iCog tool (the local memory_/icog_ tools AND any external iCog MCP
+   tool) from the advertised set, scoped to demo only; authed behavior is
+   unchanged. */
+const DEMO_MODE = (process.env.AUTH_MODE ?? "").toLowerCase() === "demo";
+
+/* Name predicate for the memory/iCog family, matched loosely so it also catches
+   externally connected iCog MCP tools (advertised as mcp_<serverId>_<tool>,
+   e.g. mcp_icog_recall): memory_*, recall/remember/forget/learn/reflect/
+   introspect/talk/compose/dream*, and anything mentioning icog/cognitivx. */
+function isMemoryTool(name: string): boolean {
+  return /(^|_)(memory|icog|cognitivx|recall|remember|forget|learn|reflect|introspect|talk|compose|dream)(_|$)/i.test(
+    name,
+  );
+}
+
 /* Convert the registry manifest to OpenAI function-tool definitions, with the
    LOCAL orchestration tools (team_run / workflow_run / queue_enqueue) merged in
    so the model can call them alongside the 76 engine tools. The iCog memory
    tools are merged in only when iCog is configured (ICOG_API_KEY set), so the
-   model never advertises a memory it cannot reach. */
+   model never advertises a memory it cannot reach. In the demo, memory/iCog
+   tools are dropped entirely (see DEMO_MODE above). */
 export function toOpenAITools(manifest: ToolDef[]): OpenAITool[] {
   const engine = manifest.map((t) => ({
     type: "function" as const,
@@ -106,8 +126,11 @@ export function toOpenAITools(manifest: ToolDef[]): OpenAITool[] {
       parameters: t.inputSchema ?? { type: "object", properties: {} },
     },
   }));
-  const icog = isIcogConfigured() ? ICOG_TOOLS : [];
-  return [...LOCAL_TOOLS, ...icog, ...engine];
+  const icog = !DEMO_MODE && isIcogConfigured() ? ICOG_TOOLS : [];
+  const tools = [...LOCAL_TOOLS, ...icog, ...engine];
+  // Demo: strip any memory/iCog tool that slipped through (e.g. a connected
+  // iCog MCP server) so a visitor's first message can't trigger a memory error.
+  return DEMO_MODE ? tools.filter((t) => !isMemoryTool(t.function.name)) : tools;
 }
 
 /* Dispatch a tool call: local orchestration tools run in-process (with the

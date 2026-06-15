@@ -2,6 +2,7 @@
 import "./env.ts";
 import { generate } from "./run.ts";
 import { parseAspect, parseSize } from "./format.ts";
+import { demoGenerate } from "./demo.ts";
 import { generateLongform } from "./longform-run.ts";
 import { generateStatic } from "./generate-static.ts";
 import { generateCarousel } from "./generate-carousel.ts";
@@ -87,6 +88,17 @@ async function main() {
       const item = await generate(seed, channel, { voice, music: !noMusic, broll: !noBroll, preview, mood, aspect, width: size?.width, height: size?.height, abStoryboard: !noAb, maxQaPasses });
       console.log(`\n${item.status === "packaged" ? "✓ done" : "■ stopped at " + item.status}: ${item.id}`);
       if (item.videoPath) console.log(`  video: ${item.videoPath}`);
+      break;
+    }
+    case "demo": {
+      // ZERO-AUTH one-liner: render a real 9:16 vertical with NO API keys.
+      // Canned storyboard (no brain) + motion_graphics mood (no stock footage) +
+      // synth music + subtitles (no voice). See packages/engine/src/demo.ts.
+      const mood = opt("mood", "") || undefined;
+      const seed = args.slice(1).join(" ").trim();
+      console.log(`\n▶ Socheli demo — no API keys needed\n  idea: ${seed || "(default: how memory actually works)"}\n`);
+      const { savedPath } = await demoGenerate(seed, { mood });
+      console.log(`\n✓ saved ${savedPath}`);
       break;
     }
     case "longform": {

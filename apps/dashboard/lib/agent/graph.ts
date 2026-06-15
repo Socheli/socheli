@@ -190,9 +190,18 @@ export type AgentContextInput = {
   [k: string]: unknown;
 };
 
+/* Multimodal content parts for a user turn carrying pasted/dropped images.
+   The OpenAI-style `image_url` shape is what @langchain/openai forwards to
+   OpenRouter (and on to Claude/Gemini); `url` is a data: URL for pasted images.
+   Text-file attachments are folded into the text part upstream, so only image
+   parts ride here. */
+export type MultimodalPart =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } };
+
 export type AgentMessageInput = {
   role: "user" | "assistant" | "system";
-  content: string;
+  content: string | MultimodalPart[];
 };
 
 export type StreamAgentEvent =
@@ -208,8 +217,12 @@ export type StreamAgentEvent =
   | { type: "done" }
   | { type: "error"; message: string };
 
+/* The public read-only demo advertises NO memory/iCog tools (see toOpenAITools),
+   so don't tell the model about a memory it doesn't have here either. */
+const DEMO_MODE = (process.env.AUTH_MODE ?? "").toLowerCase() === "demo";
+
 function buildSystem(context?: AgentContextInput, tenant?: TenantContext): string {
-  let base = SYSTEM_PROMPT + (isIcogConfigured() ? MEMORY_PROMPT : "");
+  let base = SYSTEM_PROMPT + (!DEMO_MODE && isIcogConfigured() ? MEMORY_PROMPT : "");
   // Tell the model its tenancy so it understands its scope and limits. The model
   // only sees tools its role can use, but a plain explanation avoids confusing
   // "I can't do that" loops for viewers.
@@ -229,10 +242,23 @@ function buildSystem(context?: AgentContextInput, tenant?: TenantContext): strin
   return `${base}\n\nContext:\n${lines.join("\n")}`;
 }
 
+/* Flatten any multimodal array to its text parts (assistant/system turns never
+   carry images, and the LangChain AI/System messages want a plain string). */
+function asText(content: string | MultimodalPart[]): string {
+  if (typeof content === "string") return content;
+  return content
+    .filter((p): p is Extract<MultimodalPart, { type: "text" }> => p.type === "text")
+    .map((p) => p.text)
+    .join("\n");
+}
+
 function toLcMessage(m: AgentMessageInput): BaseMessage {
-  if (m.role === "assistant") return new AIMessage(m.content);
-  if (m.role === "system") return new SystemMessage(m.content);
-  return new HumanMessage(m.content);
+  if (m.role === "assistant") return new AIMessage(asText(m.content));
+  if (m.role === "system") return new SystemMessage(asText(m.content));
+  // A user turn may carry an array of {text}/{image_url} parts — LangChain's
+  // ChatOpenAI converter turns that into OpenAI multimodal content that
+  // OpenRouter forwards to the (vision-capable) model. Pass it straight through.
+  return new HumanMessage(m.content as never);
 }
 
 async function buildGraph(model: string | undefined, signal?: AbortSignal, ctx?: AgentJobCtx) {

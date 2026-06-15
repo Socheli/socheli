@@ -115,6 +115,7 @@ section{padding:96px 0}
 .cmd button:hover{color:var(--ink-1)}
 .cmd button svg{width:11px;height:11px}
 .hero-links{margin-top:20px;font-size:14px;color:var(--ink-2)}
+.hero-note{display:block;margin-bottom:10px;color:var(--ink-3)}
 .margin-note{position:absolute;right:6%;top:38%;width:200px;transform:rotate(-2deg);text-align:center}
 .margin-note svg{width:90px;height:54px;color:var(--stroke-2);margin:0 auto 4px}
 @media(max-width:1023px){.margin-note{display:none}}
@@ -389,10 +390,10 @@ footer{position:relative;border-top:1px solid var(--rule);padding:72px 0 40px;ov
     <p class="eyebrow hero-eyebrow"><svg class="eb-star" aria-hidden="true"><use href="#mk-glyph"/></svg>FIELD MANUAL — OWN YOUR FLEET</p>
     <h1><span>One idea in.</span><span>Published video out.</span><svg class="h1-u" viewBox="0 0 320 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M4 9 C60 5.6 150 8.2 230 6 C265 5.2 295 7.2 316 5.8"/><path pathLength="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".45" d="M10 11.4 C80 8.4 180 10.6 312 8.2"/></svg></h1>
     <p class="sub">Socheli is the open-source social media manager that creates, publishes, and grows. It scripts, voices, renders, and posts on its own. Your devices do the work. Your disk keeps the data.</p>
-    <div class="cmd"><span><span class="ps">$</span> npx @socheli/cli</span>
-      <button type="button" data-copy="npx @socheli/cli" aria-label="Copy command"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>copy</span></button>
+    <div class="cmd"><span><span class="ps">$</span> git clone https://github.com/Socheli/socheli &amp;&amp; cd socheli &amp;&amp; pnpm i &amp;&amp; pnpm content demo "why we procrastinate"</span>
+      <button type="button" data-copy='git clone https://github.com/Socheli/socheli && cd socheli && pnpm i && pnpm content demo "why we procrastinate"' aria-label="Copy command"><svg aria-hidden="true"><use href="#mk-spark"/></svg><span>copy</span></button>
     </div>
-    <p class="hero-links"><a href="https://github.com/Socheli">Read the architecture →</a></p>
+    <p class="hero-links"><span class="hero-note">Renders a real vertical video locally in about a minute and prints the path — no signup, no keys, no provider credentials.</span><a href="https://github.com/Socheli">Read the architecture →</a></p>
   </div>
   <div class="margin-note" aria-hidden="true">
     <svg viewBox="0 0 90 54" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -424,7 +425,7 @@ footer{position:relative;border-top:1px solid var(--rule);padding:72px 0 40px;ov
         <svg class="ticks" aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width=".4">
           <path d="M0 3 L0 0 L2.2 0 M97.8 0 L100 0 L100 3 M100 97 L100 100 L97.8 100 M2.2 100 L0 100 L0 97" vector-effect="non-scaling-stroke" style="stroke-width:1px"/>
         </svg>
-        <pre class="log" data-log><span class="line" style="--i:0"><span class="dim">$</span> content new --channel mychannel</span><span class="line" style="--i:1">  trends → idea ...... 46s    <span class="dim">"How Sri Lanka handed China a port for 99 years"</span></span><span class="line" style="--i:2">  hook ............... 18s    <span class="dim">"Colombo took the loan. Beijing took the port."</span></span><span class="line" style="--i:3">  script ............. 51s</span><span class="line" style="--i:4">  storyboard ......... 1m06s  <span class="dim">8 scenes · 28s cut</span></span><span class="line" style="--i:5">  fact-check ......... <span class="em">flagged a misattributed loan figure → revised</span></span><span class="line" style="--i:6">  QA ................. passed 8/10</span><span class="line" style="--i:7">  music · b-roll ..... 2m32s  <span class="dim">119 beats matched · 5 sfx cues</span></span><span class="line" style="--i:8">  render ............. 1m44s  <span class="dim">1080×1920 · Remotion</span></span><span class="line" style="--i:9">  <span class="gate">→ gate: WAITING FOR HUMAN</span></span><span class="line" style="--i:10">  → approve to publish</span><span class="line" style="--i:11"><span class="cursor"></span></span></pre>
+        <pre class="log" data-log><span class="line" style="--i:0"><span class="dim">$</span> content new --channel mychannel</span><span class="line" style="--i:1">  trends → idea ...... 46s    <span class="dim">"How Sri Lanka handed China a port for 99 years"</span></span><span class="line" style="--i:2">  hook ............... 18s    <span class="dim">"Colombo took the loan. Beijing took the port."</span></span><span class="line" style="--i:3">  script ............. 51s</span><span class="line" style="--i:4">  storyboard ......... 1m06s  <span class="dim">8 scenes · 28s cut</span></span><span class="line" style="--i:5">  fact-check ......... <span class="em">flagged a misattributed loan figure → revised</span></span><span class="line" style="--i:6">  QA ................. passed 8/10</span><span class="line" style="--i:7">  music · b-roll ..... 2m32s  <span class="dim">119 beats matched · 5 sfx cues</span></span><span class="line" style="--i:8">  render ............. 1m44s  <span class="dim">1080×1920 · Remotion · ~/socheli/renders/&lt;id&gt;.mp4</span></span><span class="line" style="--i:9">  <span class="gate">→ gate: WAITING FOR HUMAN</span></span><span class="line" style="--i:10">  → approve to publish</span><span class="line" style="--i:11"><span class="cursor"></span></span></pre>
       </div>
       <figcaption class="fig-cap">Fig. 1 — pipeline run of 2026-06-11, reprinted unedited.<sup class="fnm"><a href="#fn-1" aria-label="footnote 1"><svg aria-hidden="true"><use href="#mk-spark"/></svg>1</a></sup></figcaption>
       <div class="fig1-note" aria-hidden="true"><span class="hand">run it yourself</span></div>

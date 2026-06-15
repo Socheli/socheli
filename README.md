@@ -59,6 +59,17 @@ Socheli is built API-first. Every surface speaks to the same control plane.
 | **Dashboard** | [`apps/dashboard`](apps/dashboard) | The web app (Next.js + Clerk) — War Room, Queue, Autopilot, Devices. |
 | **Engine** | [`@os/engine`](packages/engine) | The generation/render pipeline + fleet agent + scheduler. |
 
+## Try it now (no API key)
+
+```bash
+git clone https://github.com/Socheli/socheli && cd socheli && pnpm i
+pnpm content demo "why we procrastinate"
+```
+
+Renders a vertical video locally and prints the path — no signup, no keys, no provider
+credentials. The demo uses bundled placeholder media and offline fallbacks, so it works
+with every provider key empty.
+
 ## 60-second quickstart
 
 ```bash
