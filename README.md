@@ -4,9 +4,10 @@
 
 # Socheli
 
-**The agentic content engine.** One idea in → a premium, faceless video — vertical (9:16) *or*
-long-form (16:9) — end to end: researched, written, storyboarded, fact-checked, QA-gated,
-**edited**, rendered, packaged, and published across YouTube, Instagram, and TikTok.
+**The agentic content engine.** One idea in → a premium, faceless video at **any aspect ratio** —
+vertical 9:16, square 1:1, wide 16:9, or a custom W×H canvas — end to end: researched, written,
+storyboarded, fact-checked, QA-gated, **edited**, rendered, packaged, and published across YouTube,
+Instagram, and TikTok.
 
 [Quickstart](docs/quickstart.md) · [Architecture](docs/architecture.md) · [Editor](docs/WORLD-CLASS-EDITING.md) · [API](docs/api.md) · [SDK](docs/sdk.md) · [CLI](docs/cli.md) · [MCP](docs/mcp.md) · [Harness](docs/harness.md) · [Fleet](docs/fleet.md)
 
