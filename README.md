@@ -4,11 +4,11 @@
 
 # Socheli
 
-**The agentic content engine.** One idea in → a premium, faceless vertical video, end to end —
-researched, written, storyboarded, QA-gated, rendered, packaged, and published across YouTube,
-Instagram, and TikTok.
+**The agentic content engine.** One idea in → a premium, faceless video — vertical (9:16) *or*
+long-form (16:9) — end to end: researched, written, storyboarded, fact-checked, QA-gated,
+**edited**, rendered, packaged, and published across YouTube, Instagram, and TikTok.
 
-[Quickstart](docs/quickstart.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [SDK](docs/sdk.md) · [CLI](docs/cli.md) · [MCP](docs/mcp.md) · [Harness](docs/harness.md) · [Fleet](docs/fleet.md)
+[Quickstart](docs/quickstart.md) · [Architecture](docs/architecture.md) · [Editor](docs/WORLD-CLASS-EDITING.md) · [API](docs/api.md) · [SDK](docs/sdk.md) · [CLI](docs/cli.md) · [MCP](docs/mcp.md) · [Harness](docs/harness.md) · [Fleet](docs/fleet.md)
 
 </div>
 
@@ -16,14 +16,34 @@ Instagram, and TikTok.
 
 ## What it is
 
-Socheli turns a single prompt into a finished, on-brand short. The pipeline is fully agentic:
+Socheli turns a single prompt into a finished, on-brand video — a **vertical short** or a
+**multi-chapter long-form** cut (`socheli longform "…"`). The pipeline is fully agentic:
 trends → scored concept board → hook → script → storyboard → fact-check → QA council →
-scene-synced voice + karaoke captions → ducked music bed → graded b-roll → branded outro →
-per-platform captions → thumbnail → publish.
+scene-synced voice + karaoke captions → ducked music bed → graded b-roll → frame-accurate edit →
+branded outro → per-platform captions → thumbnail → publish.
 
 It runs as a **distributed system**: an always-on control plane (dashboard + API + scheduler) and
 a **fleet** of render devices that pick up jobs over MQTT, render locally, and sync results back.
 Add a machine, it joins the pool.
+
+## A real editor — not a template filler
+
+Most "AI video" tools fill a template. Socheli **edits**. An editorial brain turns the brief into
+an edit decision list, runs the craft passes a real team would, and **reviews its own cut**:
+
+- **Frame-accurate control** — a frame-by-frame editor core: vision on sampled frames, structural
+  edits, and time control (trims, punch-ins, holds, beat-synced cuts). Every decision is data, not a preset.
+- **DaVinci-grade craft** — a colorist (scopes → exposure / white-balance / scene-consistency grades),
+  an editor (pacing + cuts), a mixer (music ducked under VO), and a compositor — on a Remotion + ffmpeg stack.
+- **Caption choreography** — multiple caption schools (karaoke, lower-third, behind-subject), kept
+  readable by a governor that keeps captions off faces and forces heavy outlines.
+- **Beat sync + music bed** — cuts and punch-ins land on detected beats; the bed auto-ducks under voice.
+- **A browser studio** — `/editor` + `/studio`: filmstrip, timeline, frame inspector, and
+  chat-to-edit. Ask for a change in plain language, see it on the real frame, undo anything.
+
+See [docs/WORLD-CLASS-EDITING.md](docs/WORLD-CLASS-EDITING.md),
+[docs/EDITOR-FRAME-CONTROL.md](docs/EDITOR-FRAME-CONTROL.md), and
+[docs/editor-agent-tools.md](docs/editor-agent-tools.md).
 
 ## Surfaces
 
