@@ -1102,7 +1102,7 @@ export const EditBrief = z.object({
   audience: z.string(), // who it's for
   feeling: z.array(z.string()).max(8), // desired emotional register(s)
   structureArc: z.array(SceneFunction).max(16), // the intended story arc
-  constraints: z.array(z.string()).default([]), // hard rules ("9:16", "Persian subtitles")
+  constraints: z.array(z.string()).default([]), // hard rules ("9:16", "Spanish subtitles")
   doNots: z.array(z.string()).default([]), // taste guardrails ("no cheesy transitions")
   references: z.array(z.string()).default([]), // reference looks / videos / brands
   hookWindowSec: z.number().min(0.5).max(8).default(3), // seconds to establish curiosity

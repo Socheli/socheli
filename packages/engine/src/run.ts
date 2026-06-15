@@ -10,6 +10,7 @@ import { saveItem, loadItem, newId, nowIso, logLine, charge, warn } from "./stor
 import { autoSyncAfterRender } from "./sync.ts";
 import { synthVoiceSceneSynced, ensureMusic, evenSubtitles, musicBeatFrames, synthSfx, buildSfxCues, duckMusic, polishVoice } from "./media.ts";
 import { resolveScenesBroll, resolveGridCells, loadUsed } from "./broll.ts";
+import { resolveFormat, type AspectId } from "./format.ts";
 import { makeThumbnail } from "./derivatives.ts";
 import { musicPrompt } from "./music-prompt.ts";
 import { cleanIdea, cleanScript, cleanStoryboard, cleanPackage } from "./sanitize.ts";
@@ -24,6 +25,9 @@ type Opts = {
   broll?: boolean;
   preview?: boolean;
   mood?: string; // override the mood preset (else channel default / idea suggestion)
+  aspect?: AspectId; // output shape: "9:16" (default) | "1:1" | "16:9". Ignored if width&height given.
+  width?: number;    // custom canvas width (with height → any aspect; overrides `aspect`)
+  height?: number;   // custom canvas height
   abStoryboard?: boolean; // default true — generate 2 storyboard variants, pick higher-scoring
   maxQaPasses?: number;   // default 3 — max iterative QA+revision cycles before render
   research?: "quick" | "standard" | "deep"; // run verified research on the seed FIRST, fold the cited report into ideation
@@ -205,6 +209,17 @@ export async function generate(seed: string, channelId: string, opts: Opts = {})
   }
   item.status = "qa_passed";
   step(`QA passed: ${qa.data.overall}/10`);
+
+  // Output geometry — stamp the chosen aspect/size onto the storyboard so the
+  // render emits exactly this shape (Remotion sizes the composition off
+  // storyboard.width/height). Applied AFTER the QA loop so a revision pass can't
+  // reset it to the 9:16 default. No opts → 9:16 1080×1920 (unchanged default).
+  const fmt = resolveFormat({ aspect: opts.aspect, width: opts.width, height: opts.height });
+  sb.data.width = fmt.width;
+  sb.data.height = fmt.height;
+  sb.data.aspect = fmt.aspect;
+  item.storyboard = sb.data;
+  if (fmt.width !== 1080 || fmt.height !== 1920) step(`format: ${fmt.aspect ?? "custom"} ${fmt.width}×${fmt.height}`);
 
   // 5. Media — scene-synced natural voice (opt-in) + word-level captions + music
   let board = sb.data;

@@ -5,6 +5,7 @@ import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync, renameSync, writeFileSync, readFileSync, rmSync, readdirSync, mkdirSync, symlinkSync, copyFileSync, statSync } from "node:fs";
 import { RENDERS_DIR, ensureDir, loadItem, saveItem } from "./store.ts";
+import { ASPECT_PRESETS } from "./format.ts";
 import type { PostProps, WordCue, SubtitleCue } from "./types.ts";
 import type { CarouselSpec, Clip, ColorGrade, ContentItem, Mix, Timeline } from "@os/schemas";
 import { buildAudioFiltergraph, duckMusic } from "./media.ts";
@@ -410,14 +411,10 @@ type SpineFormat = { width: number; height: number; fps: number };
  *    fit  — letterbox-pad with black bars (no crop, no fill) */
 export type Reframe = { aspect?: "9:16" | "1:1" | "16:9" | "original"; fill?: "blur" | "crop" | "fit" };
 
-/** Even, h264-friendly dimensions for a target aspect (1080 on the short side). */
+/** Even, h264-friendly dimensions for a target aspect (1080 on the short side).
+ *  Shares the one preset table in format.ts; "original" keeps the source shape. */
 function aspectDims(aspect: NonNullable<Reframe["aspect"]>): { width: number; height: number } | null {
-  switch (aspect) {
-    case "9:16": return { width: 1080, height: 1920 };
-    case "1:1": return { width: 1080, height: 1080 };
-    case "16:9": return { width: 1920, height: 1080 };
-    case "original": return null;
-  }
+  return aspect === "original" ? null : ASPECT_PRESETS[aspect];
 }
 
 /** Resolve the spine's output geometry. With a `reframe.aspect` (e.g. "9:16" for

@@ -1,6 +1,7 @@
 #!/usr/bin/env -S node --import tsx
 import "./env.ts";
 import { generate } from "./run.ts";
+import { parseAspect, parseSize } from "./format.ts";
 import { generateLongform } from "./longform-run.ts";
 import { generateStatic } from "./generate-static.ts";
 import { generateCarousel } from "./generate-carousel.ts";
@@ -78,10 +79,12 @@ async function main() {
       const channel = opt("channel", "labrinox");
       const mood = opt("mood", "") || undefined;
       const maxQaPasses = parseInt(opt("qa-passes", "3"), 10);
+      const aspect = parseAspect(opt("aspect", "")); // 9:16 (default) | 1:1 | 16:9
+      const size = parseSize(opt("size", ""));        // custom canvas, e.g. --size 1080x1350
       const seed = args.slice(1).join(" ").trim();
-      if (!seed) return fail('usage: content new "<idea>" [--channel <id>] [--mood <id>] [--voice] [--no-music] [--no-broll] [--no-ab] [--qa-passes <1-5>] [--preview]');
-      console.log(`\n▶ generating for ${channel}\n  seed: ${seed}\n`);
-      const item = await generate(seed, channel, { voice, music: !noMusic, broll: !noBroll, preview, mood, abStoryboard: !noAb, maxQaPasses });
+      if (!seed) return fail('usage: content new "<idea>" [--channel <id>] [--mood <id>] [--aspect 9:16|1:1|16:9] [--size WxH] [--voice] [--no-music] [--no-broll] [--no-ab] [--qa-passes <1-5>] [--preview]');
+      console.log(`\n▶ generating for ${channel}\n  seed: ${seed}${aspect || size ? `\n  format: ${size ? `${size.width}×${size.height}` : aspect}` : ""}\n`);
+      const item = await generate(seed, channel, { voice, music: !noMusic, broll: !noBroll, preview, mood, aspect, width: size?.width, height: size?.height, abStoryboard: !noAb, maxQaPasses });
       console.log(`\n${item.status === "packaged" ? "✓ done" : "■ stopped at " + item.status}: ${item.id}`);
       if (item.videoPath) console.log(`  video: ${item.videoPath}`);
       break;
