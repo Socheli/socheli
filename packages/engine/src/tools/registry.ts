@@ -142,9 +142,6 @@ import { timelineEditTools } from "./timeline-edit-tools.ts";
 import { ingestSeedTools } from "./ingest-seed-tools.ts";
 import { understandingTools } from "./understanding-tools.ts";
 import { ingestTools } from "./ingest-tools.ts";
-import { demoTools } from "./demo-tools.ts";
-import { scenarioTools } from "./scenario-tools.ts";
-import { deviceTools } from "./device-tools.ts";
 
 // Shared helpers live in the leaf ./helpers.ts (see the re-export block below for
 // why). Imported here for registry.ts's OWN tool definitions; the re-export keeps
@@ -1767,9 +1764,6 @@ export const pipelineTools: PipelineTool[] = [
   ...ingestSeedTools,
   ...understandingTools,
   ...ingestTools,
-  ...demoTools,
-  ...scenarioTools,
-  ...deviceTools,
 ];
 
 /** Every capability in one list: editor tools + pipeline tools. */
